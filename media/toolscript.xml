@@ -1,0 +1,85 @@
+ <toolScript>
+
+  <settings>
+    <!-- Settings that are not per-tool -->
+    <sliceHeight text="Slice Height" units="mm">0.42</sliceHeight>
+  </settings>
+
+   <!-- Expose settings for the first tool -->
+   <tool name="Blue10ccTaperRight">
+     <settings>
+       <pathSpeed text="Path Speed" units="mm/s">10</pathSpeed>
+       <pathWidth text="Path Width" units="mm">0.5</pathWidth>
+       <depositionRate text="DepositionRate" units="mm/mm">0.0009</depositionRate>
+       <pushout text="Pushout" units="seconds">0.2</pushout>
+       <suckback text="Suckback" units="seconds">0.2</suckback>
+       <suckbackDelay text="Suckback Delay" units="seconds">0</suckbackDelay>
+       <clearance text="Clearance" units="mm">2</clearance>
+       <pausePaths text="Pause after # Paths" units=" # of paths">300</pausePaths>
+       <pitch text="Pitch" units="?">0.000397</pitch>
+     </settings>
+   </tool>
+
+   <!-- Expose settings for the second tool -->
+   <tool name="Amber10ccLeft">
+     <settings>
+       <pathSpeed text="Path Speed" units="mm/s">30</pathSpeed>
+       <pathWidth text="Path Width" units="mm">0.2</pathWidth>
+       <depositionRate text="DepositionRate" units="mm/mm">0.0007</depositionRate>
+       <pushout text="Pushout" units="seconds">0.4</pushout>
+       <suckback text="Suckback" units="seconds">0.3</suckback>
+       <suckbackDelay text="Suckback Delay" units="seconds">0</suckbackDelay>
+       <clearance text="Clearance" units="mm">3</clearance>
+       <pausePaths text="Pause after # Paths" units=" # of paths">300</pausePaths>
+       <pitch text="Pitch" units="?">0.000397</pitch>
+     </settings>
+   </tool>
+
+  <printScript>
+  <![CDATA[
+
+    // the code for scripting goes here
+    // inputs are : (TSI stands for "tool script interface")
+    // AMFFileTSI object
+    // FabFileTSI fabFile
+    // PatherTSI pather
+    // SlicerTSI slicer
+    // MaterialMappingTSI materials - mapping of material IDs selected by the user to script-defined tools
+    
+    // Variables are set based on the settings above.  Basic settings
+    // in the root <settings> tag will be passed in with a variable name
+    // that is the same as their node name (e.g. sliceHeight in this file).
+    // Settings that are tool-specific are passed into this script as the
+    // tool's name followed by an underscore followed by the setting name.
+    // For example, Amber10ccLeft_pathSpeed is the pathSpeed setting for the
+    // Amber10ccLeft tool.
+
+    // Set up the slicer, and make some slices
+    slicer.alignBottom();
+    slicer.sequenceBottomUp();
+    slicer.setSliceHeight(sliceHeight);
+    var slices = slicer.doSlicing(object);
+
+    pather.set("PathWidth", Blue10ccTaperRight_pathWidth);
+    var paths = pather.doPathing(slices);
+    
+    paths.writeToVisualizerFile("visualize_paths.pathstack");
+
+    var fabWriter = fabFile.fabAtHomeModel2Writer();
+    var materialCalibration = fabWriter.materialCalibration("Blue10ccTaperRight");
+    materialCalibration.set("pathSpeed", Blue10ccTaperRight_pathSpeed);
+    materialCalibration.set("depositionRate", Blue10ccTaperRight_depositionRate);
+    materialCalibration.set("pathWidth", Blue10ccTaperRight_pathWidth);
+    materialCalibration.set("pushout", Blue10ccTaperRight_pushout);
+    materialCalibration.set("suckback", Blue10ccTaperRight_suckback);
+    materialCalibration.set("suckbackDelay", Blue10ccTaperRight_suckbackDelay);
+    materialCalibration.set("clearance", Blue10ccTaperRight_clearance);
+    materialCalibration.setInt("pausePaths", Blue10ccTaperRight_pausePaths);
+    materialCalibration.set("pitch", Blue10ccTaperRight_pitch);
+    materialCalibration.setPaths(paths);
+
+    fabWriter.print();
+
+  ]]>
+  </printScript>
+</toolScript>

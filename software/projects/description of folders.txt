@@ -1,0 +1,15 @@
+//----[  apps  ]---------------------------------------------------------------
+Self-contained feature rich applications (such as the FabStudio) go here.
+
+
+
+
+//----[  tests  ]--------------------------------------------------------------
+Make unit tests a project in a folder under this directory.  When we start to
+have a regular build, all of these projects will be built and executed to
+ensure that our software is working.
+
+When creating a new unit test, implement it as a "tinman" test and add your
+test to the tinman project's "main.cpp"
+
+See the vector3 directory for an example of how this is done.

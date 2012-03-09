@@ -1,0 +1,2 @@
+ - please DO NOT commit project temporary files (build directories, etc.)
+   that are generated when you compile a project
