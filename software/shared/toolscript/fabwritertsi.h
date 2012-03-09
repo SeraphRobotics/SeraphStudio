@@ -53,7 +53,7 @@ public slots:
 
   /**
    * Returns the writer that can generate the XML contents of a Fab@Home
-   * Model 2's .fab file.
+   * Model 3's .xdfl file.
    */
   QScriptValue fabAtHomeModel2Writer();
 

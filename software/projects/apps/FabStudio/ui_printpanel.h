@@ -189,7 +189,7 @@ public:
         sendToPrinter->setText(QApplication::translate("PrintPanel", "Send to Printer", 0, QApplication::UnicodeUTF8));
         sendToPrinter->setDescription(QApplication::translate("PrintPanel", "Connect to the printer and send it the current scene.  The program will step you through attaching the necessary tools.", 0, QApplication::UnicodeUTF8));
         savePrintJob->setText(QApplication::translate("PrintPanel", "Save to a File (Advanced)", 0, QApplication::UnicodeUTF8));
-        savePrintJob->setDescription(QApplication::translate("PrintPanel", "Store this print job in a .FAB file.  This will save only the information the printer needs and not the original objects.", 0, QApplication::UnicodeUTF8));
+        savePrintJob->setDescription(QApplication::translate("PrintPanel", "Store this print job in a .XDFL file.  This will save only the information the printer needs and not the original objects.", 0, QApplication::UnicodeUTF8));
         abandonPrintJob->setText(QApplication::translate("PrintPanel", "Start Over", 0, QApplication::UnicodeUTF8));
         abandonPrintJob->setDescription(QApplication::translate("PrintPanel", "Discard this print job and go back to loading objects and assigning materials.", 0, QApplication::UnicodeUTF8));
     } // retranslateUi

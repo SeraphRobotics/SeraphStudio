@@ -908,7 +908,7 @@ void MainWindow::finishedLoadObjectFile() {
 
 void MainWindow::on_actionVisit_FabAtHome_org_triggered() {
   todo("kwg8", "do something (pop failure msg) if we can't open the website");
-  QDesktopServices::openUrl(QUrl("http://www.fabathome.org/"));
+  QDesktopServices::openUrl(QUrl("http://seraphrobotics.com/"));
 }
 
 void MainWindow::on_actionAbout_FabStudio_triggered() {

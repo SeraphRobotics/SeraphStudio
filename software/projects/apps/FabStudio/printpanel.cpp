@@ -359,7 +359,7 @@ void PrintPanel::on_savePrintJob_clicked() {
       QFileDialog::getSaveFileName(main_window_,
                                    QString("Save Print Job to Disk"),
                                    QDir::currentPath(),
-                                   QString("Fab File (*.fab)"));
+                                   QString("XDFL File (*.xdfl)"));
 
   // Discard if the dialog was canceled
   if (script_file_name.isEmpty()) return;
@@ -424,7 +424,7 @@ void PrintPanel::on_sendToPrinter_clicked() {
 
   // Save out the fab file to a temporary location
   QString temporary_fab_file_name;
-  QTextStream(&temporary_fab_file_name) << "print-job-" << qrand() << ".fab";
+  QTextStream(&temporary_fab_file_name) << "print-job-" << qrand() << ".xdfl";
 
   QFile file(temporary_fab_file_name);
   if (file.open(QFile::WriteOnly|QFile::Text)) {

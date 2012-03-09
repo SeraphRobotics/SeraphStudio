@@ -110,6 +110,7 @@ void FabAtHomeModel2FabWriterTSI::setPrintAcceleration(int acceleration) {
 
 struct PrintablePaths {
   float z;
+  int id;
   QString tool_name;
   PathSliceRegion* region;
 };
@@ -122,33 +123,42 @@ bool operator < (const PrintablePaths& lhs,
 
 void FabAtHomeModel2FabWriterTSI::print() {
 
-  QDomElement root = fab_document_.createElement("fabAtHomePrinter");
+  QDomElement root = fab_document_.createElement("xdfl");
   fab_document_.appendChild(root);
 
-  { // write out the print-acceleration node
-    QString print_acceleration_text;
-    QTextStream (&print_acceleration_text) << print_acceleration_;
-    QDomElement element = fab_document_.createElement("printAcceleration");
-    element.appendChild(fab_document_.createTextNode(print_acceleration_text));
-    root.appendChild(element);
-  }
+//  { // write out the print-acceleration node
+//    QString print_acceleration_text;
+//    QTextStream (&print_acceleration_text) << print_acceleration_;
+//    QDomElement element = fab_document_.createElement("printAcceleration");
+//    element.appendChild(fab_document_.createTextNode(print_acceleration_text));
+//    root.appendChild(element);
+//  }
+
+
+  QMap<QString,int> nameIDmap;
+
+  QDomElement pallete = fab_document_.createElement("pallete");
+
 
   for (int i = 0; i < materials_list_.size(); ++i) {
     MaterialProperties* material = materials_list_.at(i);
 
     { // add the material calibration settings to the document
-      QDomElement material_calibration = fab_document_.createElement("materialCalibration");
-      for (MaterialProperties::iterator i = material->begin(); i != material->end(); ++i) {
+      QDomElement material_calibration = fab_document_.createElement("material");
+      QString name = material->value("name");
+      nameIDmap.insert(name,i+1);
+
+      for (MaterialProperties::iterator j = material->begin(); j != material->end(); ++j) {
         QDomElement calibration_element
-            = fab_document_.createElement(i.key());
+            = fab_document_.createElement(j.key());
         calibration_element.appendChild(
-            fab_document_.createTextNode(i.value()));
+            fab_document_.createTextNode(j.value()));
         material_calibration.appendChild(calibration_element);
       }
-
-      root.appendChild(material_calibration);
+      pallete.appendChild(material_calibration);
     }
   }
+  root.appendChild(pallete);
 
   // The set of all paths that need to be printed.  This will be sorted by
   // slice height after construction so that all of the paths are printed
@@ -160,7 +170,7 @@ void FabAtHomeModel2FabWriterTSI::print() {
     MaterialProperties::iterator i = material_properties->find("name");
     confirm (i != material_properties->end()) else continue;
     QString tool_name = i.value();
-
+    int tool_id = nameIDmap[tool_name];
     AMFRegionTSI* region = printable_region_pair.second;
     PathStack* paths = region->paths();
     foreach (PathSlice* slice, paths->getPathSlices()) {
@@ -168,6 +178,7 @@ void FabAtHomeModel2FabWriterTSI::print() {
         foreach (PathSliceRegion* region, material->getRegions()) {
           PrintablePaths printable_paths;
           printable_paths.z = slice->getZ();
+          printable_paths.id = tool_id;
           printable_paths.tool_name = tool_name;
           printable_paths.region = region;
           collected_printable_paths_bottom_up.append(printable_paths);
@@ -177,6 +188,8 @@ void FabAtHomeModel2FabWriterTSI::print() {
   }
 
   qSort(collected_printable_paths_bottom_up);
+
+  QDomElement commandsDomElement = fab_document_.createElement("commands");
 
   for (int i = 0; i < collected_printable_paths_bottom_up.size(); ++i) {
 
@@ -189,8 +202,9 @@ void FabAtHomeModel2FabWriterTSI::print() {
 
       QDomElement pathDomElement = fab_document_.createElement("path");
       { // add the name of the material that's being used for this path
-        QDomElement material_calibration_name = fab_document_.createElement("materialCalibrationName");
-        material_calibration_name.appendChild(fab_document_.createTextNode(p.tool_name));
+        QDomElement material_calibration_name = fab_document_.createElement("material");
+        QString text = QString::number(p.id);
+        material_calibration_name.appendChild(fab_document_.createTextNode(text));
         pathDomElement.appendChild(material_calibration_name);
       }
 
@@ -215,7 +229,8 @@ void FabAtHomeModel2FabWriterTSI::print() {
         pathDomElement.appendChild(pointDomElement);
       }
 
-      root.appendChild(pathDomElement);
+      commandsDomElement.appendChild(pathDomElement);
     }
   }
+  root.appendChild(commandsDomElement);
 }
