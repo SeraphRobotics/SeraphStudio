@@ -40,13 +40,27 @@
 #include "shared/toolscript/amfregiontsi.h"
 #include "shared/amf/amfregion.h"
 
+struct PrintablePaths {
+  float z;
+  int id;
+  QString tool_name;
+  PathSliceRegion* region;
+};
+
+bool operator < (const PrintablePaths& lhs,
+                 const PrintablePaths& rhs) {
+  return lhs.z < rhs.z;
+}
+
 
 FabAtHomeModel2FabWriterTSI::FabAtHomeModel2FabWriterTSI(QScriptEngine& engine,
                                                          QDomDocument& fab_document)
   : ToolScriptInterface(engine),
     fab_document_(fab_document),
     print_acceleration_(100),     // default acceleration, valid for many fab files
-    print_bottom_up_(true)        // usually building things
+    print_bottom_up_(true),        // usually building things
+    hieght(10.0),
+    speed(30.0)
 {
 }
 
@@ -54,6 +68,11 @@ FabAtHomeModel2FabWriterTSI::~FabAtHomeModel2FabWriterTSI() {
   foreach (MaterialProperties* material, materials_list_) {
     delete material;
   }
+}
+
+void FabAtHomeModel2FabWriterTSI::setClearnace(double c_hieght,double c_speed){
+    hieght = c_hieght;
+    speed = c_speed;
 }
 
 void FabAtHomeModel2FabWriterTSI::addMeshes(QString material_name,
@@ -106,20 +125,6 @@ void FabAtHomeModel2FabWriterTSI::sortTopDown() {
 void FabAtHomeModel2FabWriterTSI::setPrintAcceleration(int acceleration) {
   print_acceleration_ = acceleration;
 }
-
-
-struct PrintablePaths {
-  float z;
-  int id;
-  QString tool_name;
-  PathSliceRegion* region;
-};
-
-bool operator < (const PrintablePaths& lhs,
-                 const PrintablePaths& rhs) {
-  return lhs.z < rhs.z;
-}
-
 
 void FabAtHomeModel2FabWriterTSI::print() {
 
@@ -191,6 +196,9 @@ void FabAtHomeModel2FabWriterTSI::print() {
 
   QDomElement commandsDomElement = fab_document_.createElement("commands");
 
+  FAHVector3 lastpoint(0,0,0);
+  FAHVector3 endpoint(0,0,0);
+
   for (int i = 0; i < collected_printable_paths_bottom_up.size(); ++i) {
 
     // Get the paths based on the direction of the print
@@ -198,39 +206,69 @@ void FabAtHomeModel2FabWriterTSI::print() {
         = print_bottom_up_ ? collected_printable_paths_bottom_up.at(i)
           : collected_printable_paths_bottom_up.at(collected_printable_paths_bottom_up.size()-1-i);
 
+
     foreach (Path* path, p.region->getPaths()) {
+      endpoint = path->start();
+      FAHVector3 endprime = endpoint.copy();
+      endprime[2]= endpoint[2]+hieght;
 
-      QDomElement pathDomElement = fab_document_.createElement("path");
-      { // add the name of the material that's being used for this path
-        QDomElement material_calibration_name = fab_document_.createElement("material");
-        QString text = QString::number(p.id);
-        material_calibration_name.appendChild(fab_document_.createTextNode(text));
-        pathDomElement.appendChild(material_calibration_name);
-      }
+      FAHVector3 lastprime = lastpoint.copy();
+      lastprime[2] = lastpoint[2]+hieght;
 
-      const QVector<FAHVector3>& points = path->points();
-      for (int point = 0; point < points.size(); ++point) {
-        const FAHVector3& xyz = points.at(point);
-        QDomElement pointDomElement = fab_document_.createElement("point");
-        QString v;
+      Path clearancepath = Path();
+      clearancepath.addPathPointEnd(lastpoint);
+      clearancepath.addPathPointEnd(lastprime);
+      clearancepath.addPathPointEnd(endprime);
+      clearancepath.addPathPointEnd(endpoint);
+      QDomElement clearnaceDomElement = makePathElement(&clearancepath,0,speed);
+      commandsDomElement.appendChild(clearnaceDomElement);
 
-        // Generate the x/y/z location properties
-        QDomElement x = fab_document_.createElement("x");
-        x.appendChild(fab_document_.createTextNode(v.sprintf("%f",xyz.x)));
-        pointDomElement.appendChild(x);
-        QDomElement y = fab_document_.createElement("y");
-        y.appendChild(fab_document_.createTextNode(v.sprintf("%f",xyz.y)));
-        pointDomElement.appendChild(y);
-        QDomElement z = fab_document_.createElement("z");
-        pointDomElement.appendChild(z);
-        z.appendChild(fab_document_.createTextNode(v.sprintf("%f",xyz.z)));
 
-        // Add this point to the current path
-        pathDomElement.appendChild(pointDomElement);
-      }
 
+      QDomElement pathDomElement = makePathElement(path,p.id,0);
       commandsDomElement.appendChild(pathDomElement);
+
+      lastpoint = path->end();
     }
   }
   root.appendChild(commandsDomElement);
+}
+
+QDomElement FabAtHomeModel2FabWriterTSI::makePathElement(Path* path,int id=0, double speed=0){
+    QDomElement pathDomElement = fab_document_.createElement("path");
+
+
+    if(!speed && id){ // add the name of the material that's being used for this path
+        QDomElement material_calibration_name = fab_document_.createElement("material");
+        QString text = QString::number(id);
+        material_calibration_name.appendChild(fab_document_.createTextNode(text));
+        pathDomElement.appendChild(material_calibration_name);
+    }else{
+        QDomElement speedtag = fab_document_.createElement("speed");
+        QString text = QString::number(speed);
+        speedtag.appendChild(fab_document_.createTextNode(text));
+        pathDomElement.appendChild(speedtag);
+    }
+
+    const QVector<FAHVector3>& points = path->points();
+    for (int point = 0; point < points.size(); ++point) {
+      const FAHVector3& xyz = points.at(point);
+      QDomElement pointDomElement = fab_document_.createElement("point");
+      QString v;
+
+      // Generate the x/y/z location properties
+      QDomElement x = fab_document_.createElement("x");
+      x.appendChild(fab_document_.createTextNode(v.sprintf("%f",xyz.x)));
+      pointDomElement.appendChild(x);
+      QDomElement y = fab_document_.createElement("y");
+      y.appendChild(fab_document_.createTextNode(v.sprintf("%f",xyz.y)));
+      pointDomElement.appendChild(y);
+      QDomElement z = fab_document_.createElement("z");
+      pointDomElement.appendChild(z);
+      z.appendChild(fab_document_.createTextNode(v.sprintf("%f",xyz.z)));
+
+      // Add this point to the current path
+      pathDomElement.appendChild(pointDomElement);
+    }
+    return pathDomElement;
 }

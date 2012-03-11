@@ -156,6 +156,8 @@ MainWindow::MainWindow(QWidget *parent)
   useAdvancedMode(advanced_mode);
   updateCheckMarks();
 
+
+  useAdvancedMode(true);
   setAlwaysShowStartupInformation(settings.value(kAlwaysShowStartupInformationSettingKey, false).toBool());
 }
 

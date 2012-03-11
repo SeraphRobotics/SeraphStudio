@@ -35,6 +35,7 @@
 #include <QtScript>
 #include "toolscriptinterface.h"
 #include <QDomDocument>
+#include "shared/pather/pathstack.h"
 
 class AMFRegionTSI;
 
@@ -57,6 +58,8 @@ public:
   ~FabAtHomeModel2FabWriterTSI();
 
 public slots:
+
+  void setClearnace(double c_hieght,double c_speed);
 
   void addMeshes(QString material_name,
                  QScriptValue material_calibration,
@@ -87,11 +90,18 @@ public slots:
    */
   void print();
 
-
 private:
+
+  QDomElement makePathElement(Path* path,int id, double speed);
+
 
   MaterialsList materials_list_;
   PrintableRegions regions_;
+
+
+  /// Clearances and speeds for XDFL
+  double hieght;
+  double speed;
 
   /// Output document where elements are written
   QDomDocument& fab_document_;

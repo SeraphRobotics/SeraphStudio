@@ -65,7 +65,6 @@
     <property name="title">
      <string>Options</string>
     </property>
-    <addaction name="actionEnable_Advanced_Features"/>
     <addaction name="actionShow_Information_at_Startup"/>
    </widget>
    <widget class="QMenu" name="menuHelp">

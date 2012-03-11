@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created: Fri Mar 9 01:18:07 2012
+** Created: Fri Mar 9 11:12:48 2012
 **      by: Qt User Interface Compiler version 4.6.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -108,7 +108,6 @@ public:
         menuBar->addAction(menuOptions->menuAction());
         menuBar->addAction(menuView->menuAction());
         menuBar->addAction(menuHelp->menuAction());
-        menuOptions->addAction(actionEnable_Advanced_Features);
         menuOptions->addAction(actionShow_Information_at_Startup);
         menuHelp->addSeparator();
         menuHelp->addAction(actionAbout_FabStudio);
@@ -124,7 +123,7 @@ public:
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "SeraphStudio", 0, QApplication::UnicodeUTF8));
         actionEnable_Advanced_Features->setText(QApplication::translate("MainWindow", "Enable Advanced Features", 0, QApplication::UnicodeUTF8));
         actionReset_Environment->setText(QApplication::translate("MainWindow", "Show Information at Startup", 0, QApplication::UnicodeUTF8));
-        actionVisit_FabAtHome_org->setText(QApplication::translate("MainWindow", "Visit seraphrobotics.com", 0, QApplication::UnicodeUTF8));
+        actionVisit_FabAtHome_org->setText(QApplication::translate("MainWindow", "Visit FabAtHome.org", 0, QApplication::UnicodeUTF8));
         actionVisit_FabAtHome_org->setShortcut(QApplication::translate("MainWindow", "F1", 0, QApplication::UnicodeUTF8));
         actionAbout_FabStudio->setText(QApplication::translate("MainWindow", "About SeraphStudio...", 0, QApplication::UnicodeUTF8));
         actionExit->setText(QApplication::translate("MainWindow", "Exit", 0, QApplication::UnicodeUTF8));
