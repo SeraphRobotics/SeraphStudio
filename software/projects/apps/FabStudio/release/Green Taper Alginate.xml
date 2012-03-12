@@ -1,6 +1,6 @@
  <toolScript name="Green Taper Alginate"
              description="Algiante hydrogel with cross linker"
-             printer="Fab@Home Model 2">
+             printer="Seraph">
 
   <settings>
     <!-- Settings that are not per-tool -->
@@ -34,6 +34,18 @@
 
   <printScript>
   <![CDATA[
+function makeCalib(x){
+  x.CompressionVolume = (x.pushout+x.suckback)*.5*5000*x.pitch;
+  x.AreaConstant  = x.depositionRate*3.14159265*64/x.sliceHeight/x.pathWidth;
+
+  y={pathSpeed: x.pathSpeed,
+	 pathHieght: x.sliceHeight,
+	 pathWidth: x.pathWidth,
+	 areaConstant: x.AreaConstant,
+	 compressionVolume: x.CompressionVolume
+	}
+  return y;
+}
 
 progress.setSteps(alginate.meshes.length*2 + 3);
 
@@ -48,18 +60,7 @@ for (var i = 0; i < alginate.meshes.length; ++i) {
   progress.step();
 }
 
-var alginateMaterialCalibration = {
-  pathSpeed: alginate.pathSpeed,
-  depositionRate: alginate.depositionRate,
-  pathWidth: alginate.pathWidth,
-  depositionRate: alginate.depositionRate,
-  pushout: alginate.pushout,
-  suckback: alginate.suckback,
-  suckbackDelay: alginate.suckbackDelay,
-  clearance: alginate.clearance,
-  pausePaths: alginate.pausePaths,
-  pitch: alginate.pitch
-};
+var alginateMaterialCalibration = makeCalib(alginate);
 
 var fabWriter = fabFile.fabAtHomeModel2Writer();
 

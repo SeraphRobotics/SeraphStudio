@@ -1,4 +1,6 @@
- <toolScript name="Green Taper Silicone with Frosting Support" description="You'll need two syringes, some frosting and some silicone." printer="Fab@Home Model 2">
+ <toolScript name="Green Taper Silicone with Frosting Support" 
+			 description="You'll need two syringes, some frosting and some greenTaperSilicone."
+			 printer="Seraph">
 
   <settings>
     <!-- Settings that are not per-tool -->
@@ -6,7 +8,7 @@
   </settings>
 
    <!-- Expose settings for the first tool -->
-   <tool name="Silicone" material="Silicone" scriptVariable="silicone">
+   <tool name="Silicone" material="Silicone" scriptVariable="greenTaperSilicone">
      <settings>
        <sliceHeight text="Slice Height" units="mm">0.20</sliceHeight>
        <pathSpeed text="Path Speed" units="mm/s">10</pathSpeed>
@@ -39,17 +41,29 @@
 
   <printScript>
   <![CDATA[
+function makeCalib(x){
+  x.CompressionVolume = (x.pushout+x.suckback)*.5*5000*x.pitch;
+  x.AreaConstant  = x.depositionRate*3.14159265*64/x.sliceHeight/x.pathWidth;
 
-progress.setSteps(silicone.meshes.length*2 + frosting.meshes.length*2 + 3);
+  y={pathSpeed: x.pathSpeed,
+	 pathHieght: x.sliceHeight,
+	 pathWidth: x.pathWidth,
+	 areaConstant: x.AreaConstant,
+	 compressionVolume: x.CompressionVolume
+	}
+  return y;
+}
 
-slicer.setSliceHeight(silicone.sliceHeight);
-pather.set("PathWidth", silicone.pathWidth);
-for (var i = 0; i < silicone.meshes.length; ++i) {
+progress.setSteps(greenTaperSilicone.meshes.length*2 + frosting.meshes.length*2 + 3);
+
+slicer.setSliceHeight(greenTaperSilicone.sliceHeight);
+pather.set("PathWidth", greenTaperSilicone.pathWidth);
+for (var i = 0; i < greenTaperSilicone.meshes.length; ++i) {
   progress.log("Slicing Silicone Mesh");
-  slicer.doSlicing(silicone.meshes[i]);
+  slicer.doSlicing(greenTaperSilicone.meshes[i]);
   progress.step();
   progress.log("Pathing Silicone Mesh");
-  pather.doPathing(silicone.meshes[i]);
+  pather.doPathing(greenTaperSilicone.meshes[i]);
   progress.step();
 }
 
@@ -64,34 +78,12 @@ progress.log("Slicing Frosting Mesh");
   progress.step();
 }
 
-var siliconeMaterialCalibration = {
-  pathSpeed: silicone.pathSpeed,
-  depositionRate: silicone.depositionRate,
-  pathWidth: silicone.pathWidth,
-  depositionRate: silicone.depositionRate,
-  pushout: silicone.pushout,
-  suckback: silicone.suckback,
-  suckbackDelay: silicone.suckbackDelay,
-  clearance: silicone.clearance,
-  pausePaths: silicone.pausePaths,
-  pitch: silicone.pitch
-};
+var greenTaperSiliconeMaterialCalibration = makeCalib(greenTaperSilicone);
 
-var frostingMaterialCalibration = {
-  pathSpeed: frosting.pathSpeed,
-  depositionRate: frosting.depositionRate,
-  pathWidth: frosting.pathWidth,
-  depositionRate: frosting.depositionRate,
-  pushout: frosting.pushout,
-  suckback: frosting.suckback,
-  suckbackDelay: frosting.suckbackDelay,
-  clearance: frosting.clearance,
-  pausePaths: frosting.pausePaths,
-  pitch: frosting.pitch
-};
+var frostingMaterialCalibration = makeCalib(frosting);
 
 var fabWriter = fabFile.fabAtHomeModel2Writer();
-fabWriter.addMeshes("silicone", siliconeMaterialCalibration, silicone.meshes);
+fabWriter.addMeshes("greenTaperSilicone", greenTaperSiliconeMaterialCalibration, greenTaperSilicone.meshes);
 progress.step();
 fabWriter.addMeshes("frosting", frostingMaterialCalibration, frosting.meshes);
 progress.step();

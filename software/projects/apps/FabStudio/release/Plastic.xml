@@ -1,6 +1,6 @@
  <toolScript name="ABS Plastic"
              description="Tool:heated plastic extrusion tool"
-             printer="Fab@Home Model 2 - Plastic Tool">
+             printer="Seraph - Plastic Tool">
 
   <settings>
     <!-- Settings that are not per-tool -->
@@ -35,7 +35,20 @@
 
   <printScript>
   <![CDATA[
+function makeCalib(x){
+  x.CompressionVolume = (x.pushout+x.suckback)*.5*5000*x.pitch;
+  x.AreaConstant  = x.depositionRate*3.14159265*64/x.sliceHeight/x.pathWidth;
 
+  y={pathSpeed: x.pathSpeed,
+	 pathHieght: x.sliceHeight,
+	 pathWidth: x.pathWidth,
+	 areaConstant: x.AreaConstant,
+	 compressionVolume: x.CompressionVolume
+	}
+  return y;
+}
+  
+  
 progress.setSteps(plastic.meshes.length*2 + 4);
 
 slicer.setSliceHeight(plastic.sliceHeight);
@@ -49,18 +62,7 @@ for (var i = 0; i < plastic.meshes.length; ++i) {
   progress.step();
 }
 
-var plasticMaterialCalibration = {
-  pathSpeed: plastic.pathSpeed,
-  depositionRate: plastic.depositionRate,
-  pathWidth: plastic.pathWidth,
-  depositionRate: plastic.depositionRate,
-  pushout: plastic.pushout,
-  suckback: plastic.suckback,
-  suckbackDelay: plastic.suckbackDelay,
-  clearance: plastic.clearance,
-  pausePaths: plastic.pausePaths,
-  pitch: plastic.pitch
-};
+var plasticMaterialCalibration = makeCalib(plastic);
 
 var fabWriter = fabFile.fabAtHomeModel2Writer();
 

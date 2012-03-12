@@ -1,4 +1,4 @@
-<toolScript name="Wood Milling" description="You'll need the dremel tool" printer="Fab@Home Model 2 Dremel">
+<toolScript name="Wood Milling" description="You'll need the dremel tool" printer="Seraph Dremel">
 
   <settings>
     <!-- Settings that are not per-tool -->
@@ -32,7 +32,20 @@
 
   <printScript>
     <![CDATA[
+function makeCalib(x){
+  x.CompressionVolume = (x.pushout+x.suckback)*.5*5000*x.pitch;
+  x.AreaConstant  = x.depositionRate*3.14159265*64/x.sliceHeight/x.pathWidth;
 
+  y={pathSpeed: x.pathSpeed,
+	 pathHieght: x.sliceHeight,
+	 pathWidth: x.pathWidth,
+	 areaConstant: x.AreaConstant,
+	 compressionVolume: x.CompressionVolume
+	}
+  return y;
+}
+	
+	
 progress.setSteps(wood.meshes.length*2 + 3);
 
 slicer.setSliceHeight(wood.sliceHeight);
@@ -46,21 +59,7 @@ progress.log("Slicing wood Mesh");
   progress.step();
 }
 
-var woodMaterialCalibration = {
-  pathSpeed: wood.pathSpeed,
-  depositionRate: wood.depositionRate,
-  pathWidth: wood.pathWidth,
-  depositionRate: wood.depositionRate,
-  pushout: wood.pushout,
-  suckback: wood.suckback,
-  suckbackDelay: wood.suckbackDelay,
-  clearance: wood.clearance,
-  pausePaths: wood.pausePaths,
-  pitch: wood.pitch
-};
-
-
-
+var woodMaterialCalibration = makeCalib(wood);
 
 var fabWriter = fabFile.fabAtHomeModel2Writer();
 fabWriter.addMeshes("wood", woodMaterialCalibration, wood.meshes);

@@ -1,6 +1,6 @@
  <toolScript name="Red Taper Silicone"
              description="Tool:   10cc syringe of silicone with red taper tip"
-             printer="Fab@Home Model 2">
+             printer="Seraph">
 
   <settings>
     <!-- Settings that are not per-tool -->
@@ -8,7 +8,7 @@
   </settings>
 
    <!-- Expose settings for the first tool -->
-   <tool name="Red Taper Silicone" material="Silicone" scriptVariable="silicone">
+   <tool name="Red Taper Silicone" material="Silicone" scriptVariable="redTaperSilicone">
      <settings>
        <sliceHeight text="Slice Height" units="mm">0.25</sliceHeight>
        <!--Top speed in millimeters/second for this tool during execution of path.-->
@@ -34,36 +34,36 @@
 
   <printScript>
   <![CDATA[
+function makeCalib(x){
+  x.CompressionVolume = (x.pushout+x.suckback)*.5*5000*x.pitch;
+  x.AreaConstant  = x.depositionRate*3.14159265*64/x.sliceHeight/x.pathWidth;
 
-progress.setSteps(silicone.meshes.length*2 + 4);
+  y={pathSpeed: x.pathSpeed,
+	 pathHieght: x.sliceHeight,
+	 pathWidth: x.pathWidth,
+	 areaConstant: x.AreaConstant,
+	 compressionVolume: x.CompressionVolume
+	}
+  return y;
+}
+progress.setSteps(redTaperSilicone.meshes.length*2 + 4);
 
-slicer.setSliceHeight(silicone.sliceHeight);
-pather.set("PathWidth", silicone.pathWidth);
-for (var i = 0; i < silicone.meshes.length; ++i) {
+slicer.setSliceHeight(redTaperSilicone.sliceHeight);
+pather.set("PathWidth", redTaperSilicone.pathWidth);
+for (var i = 0; i < redTaperSilicone.meshes.length; ++i) {
   progress.log("Slicing Silicone Mesh");
-  slicer.doSlicing(silicone.meshes[i]);
+  slicer.doSlicing(redTaperSilicone.meshes[i]);
   progress.step();
   progress.log("Pathing Silicone Mesh");
-  pather.doPathing(silicone.meshes[i]);
+  pather.doPathing(redTaperSilicone.meshes[i]);
   progress.step();
 }
 
-var siliconeMaterialCalibration = {
-  pathSpeed: silicone.pathSpeed,
-  depositionRate: silicone.depositionRate,
-  pathWidth: silicone.pathWidth,
-  depositionRate: silicone.depositionRate,
-  pushout: silicone.pushout,
-  suckback: silicone.suckback,
-  suckbackDelay: silicone.suckbackDelay,
-  clearance: silicone.clearance,
-  pausePaths: silicone.pausePaths,
-  pitch: silicone.pitch
-};
+var redTaperSiliconeMaterialCalibration = makeCalib(redTaperSilicone);
 
 var fabWriter = fabFile.fabAtHomeModel2Writer();
 
-fabWriter.addMeshes("silicone", siliconeMaterialCalibration, silicone.meshes);
+fabWriter.addMeshes("redTaperSilicone", redTaperSiliconeMaterialCalibration, redTaperSilicone.meshes);
 progress.step();
 
 fabWriter.sortBottomUp();

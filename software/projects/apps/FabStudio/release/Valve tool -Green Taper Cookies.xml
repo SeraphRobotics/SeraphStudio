@@ -1,6 +1,6 @@
- <toolScript name="Green Taper, Cookie"
-             description="Tool:   10cc syringe of clear vCookie with a green taper tip"
-             printer="Fab@Home Model 2 Valve">
+ <toolScript name="Green Taper"
+             description="Tool: valve based tool with green taper tip"
+             printer="Seraph Valve">
 
   <settings>
     <!-- Settings that are not per-tool -->
@@ -8,7 +8,7 @@
   </settings>
 
    <!-- Expose settings for the first tool -->
-   <tool name="Green Taper vCookie" material="vCookie" scriptVariable="vCookie">
+   <tool name="Green Taper valve1" material="valve1" scriptVariable="valve1">
      <settings>
        <sliceHeight text="Slice Height" units="mm">0.7</sliceHeight>
        <!--Top speed in millimeters/second for this tool during execution of path.-->
@@ -31,7 +31,7 @@
          <pitch text="Pitch" units="?">0.000397</pitch>
      </settings>
    </tool>
-   <tool name="Green Taper Cocolate Cookie" material="Chocolate Cookie" scriptVariable="cCookie">
+   <tool name="Green Taper valve2" material="valve2" scriptVariable="valve2">
      <settings>
        <sliceHeight text="Slice Height" units="mm">0.7</sliceHeight>
        <!--Top speed in millimeters/second for this tool during execution of path.-->
@@ -57,64 +57,55 @@
 
   <printScript>
   <![CDATA[
+function makeCalib(x){
+  x.CompressionVolume = (x.pushout+x.suckback)*.5*5000*x.pitch;
+  x.AreaConstant  = x.depositionRate*3.14159265*64/x.sliceHeight/x.pathWidth;
 
-progress.setSteps(vCookie.meshes.length*2 + cCookie.meshes.length*2+ 3);
+  y={pathSpeed: x.pathSpeed,
+	 pathHieght: x.sliceHeight,
+	 pathWidth: x.pathWidth,
+	 areaConstant: x.AreaConstant,
+	 compressionVolume: x.CompressionVolume
+	}
+  return y;
+}
+  
+  
+progress.setSteps(valve1.meshes.length*2 + valve2.meshes.length*2+ 3);
 
-slicer.setSliceHeight(vCookie.sliceHeight);
-pather.set("PathWidth", vCookie.pathWidth);
-for (var i = 0; i < vCookie.meshes.length; ++i) {
-  progress.log("Slicing vCookie Mesh");
-  slicer.doSlicing(vCookie.meshes[i]);
+slicer.setSliceHeight(valve1.sliceHeight);
+pather.set("PathWidth", valve1.pathWidth);
+for (var i = 0; i < valve1.meshes.length; ++i) {
+  progress.log("Slicing valve1 Mesh");
+  slicer.doSlicing(valve1.meshes[i]);
   progress.step();
-  progress.log("Pathing vCookie Mesh");
-  pather.doPathing(vCookie.meshes[i]);
+  progress.log("Pathing valve1 Mesh");
+  pather.doPathing(valve1.meshes[i]);
   progress.step();
 }
 
-slicer.setSliceHeight(cCookie.sliceHeight);
-pather.set("PathWidth", cCookie.pathWidth);
-for (var i = 0; i < cCookie.meshes.length; ++i) {
-  progress.log("Slicing cCookie Mesh");
-  slicer.doSlicing(cCookie.meshes[i]);
+slicer.setSliceHeight(valve2.sliceHeight);
+pather.set("PathWidth", valve2.pathWidth);
+for (var i = 0; i < valve2.meshes.length; ++i) {
+  progress.log("Slicing valve2 Mesh");
+  slicer.doSlicing(valve2.meshes[i]);
   progress.step();
-  progress.log("Pathing cCookie Mesh");
-  pather.doPathing(cCookie.meshes[i]);
+  progress.log("Pathing valve2 Mesh");
+  pather.doPathing(valve2.meshes[i]);
   progress.step();
 }
 
 
-var vCookieMaterialCalibration = {
-  pathSpeed: vCookie.pathSpeed,
-  depositionRate: 0.0,
-  pathWidth: vCookie.pathWidth,
-  depositionRate: vCookie.depositionRate,
-  pushout: vCookie.pushout,
-  suckback: vCookie.suckback,
-  suckbackDelay: vCookie.suckbackDelay,
-  clearance: vCookie.clearance,
-  pausePaths: vCookie.pausePaths,
-  pitch: vCookie.pitch
-};
+var valve1MaterialCalibration = makeCalib(valve1);
+var valve2MaterialCalibration = makeCalib(valve2);
 
-var cCookieMaterialCalibration = {
-  pathSpeed: cCookie.pathSpeed,
-  depositionRate: 0.0,
-  pathWidth: cCookie.pathWidth,
-  depositionRate: cCookie.depositionRate,
-  pushout: cCookie.pushout,
-  suckback: cCookie.suckback,
-  suckbackDelay: cCookie.suckbackDelay,
-  clearance: cCookie.clearance,
-  pausePaths: cCookie.pausePaths,
-  pitch: cCookie.pitch
-};
 
 var fabWriter = fabFile.fabAtHomeModel2Writer();
 
-fabWriter.addMeshes("vCookie", vCookieMaterialCalibration, vCookie.meshes);
+fabWriter.addMeshes("valve1", valve1MaterialCalibration, valve1.meshes);
 progress.step();
 
-fabWriter.addMeshes("cCookie", cCookieMaterialCalibration, cCookie.meshes);
+fabWriter.addMeshes("valve2", valve2MaterialCalibration, valve2.meshes);
 progress.step();
 
 fabWriter.sortBottomUp();

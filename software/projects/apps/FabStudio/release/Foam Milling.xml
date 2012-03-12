@@ -1,4 +1,4 @@
- <toolScript name="Foam Milling" description="You'll need the dremel tool" printer="Fab@Home Model 2 Dremel">
+ <toolScript name="Foam Milling" description="You'll need the dremel tool" printer="Seraph Dremel">
 
   <settings>
     <!-- Settings that are not per-tool -->
@@ -32,6 +32,18 @@
 
   <printScript>
   <![CDATA[
+function makeCalib(x){
+  x.CompressionVolume = (x.pushout+x.suckback)*.5*5000*x.pitch;
+  x.AreaConstant  = x.depositionRate*3.14159265*64/x.sliceHeight/x.pathWidth;
+
+  y={pathSpeed: x.pathSpeed,
+	 pathHieght: x.sliceHeight,
+	 pathWidth: x.pathWidth,
+	 areaConstant: x.AreaConstant,
+	 compressionVolume: x.CompressionVolume
+	}
+  return y;
+}
 
 progress.setSteps(foam.meshes.length*2 + 3);
 
@@ -46,18 +58,7 @@ progress.log("Slicing foam Mesh");
   progress.step();
 }
 
-var foamMaterialCalibration = {
-  pathSpeed: foam.pathSpeed,
-  depositionRate: foam.depositionRate,
-  pathWidth: foam.pathWidth,
-  depositionRate: foam.depositionRate,
-  pushout: foam.pushout,
-  suckback: foam.suckback,
-  suckbackDelay: foam.suckbackDelay,
-  clearance: foam.clearance,
-  pausePaths: foam.pausePaths,
-  pitch: foam.pitch
-};
+var foamMaterialCalibration = makeCalib(foam);
 
 
 

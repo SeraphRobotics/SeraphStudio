@@ -1,6 +1,6 @@
  <toolScript name="Pen drawing"
              description="drawing"
-             printer="Fab@Home Model 2 Pen drawing tool">
+             printer="Seraph Pen drawing tool">
 
   <settings>
     <!-- Settings that are not per-tool -->
@@ -34,7 +34,18 @@
 
   <printScript>
   <![CDATA[
+function makeCalib(x){
+  x.CompressionVolume = (x.pushout+x.suckback)*.5*5000*x.pitch;
+  x.AreaConstant  = x.depositionRate*3.14159265*64/x.sliceHeight/x.pathWidth;
 
+  y={pathSpeed: x.pathSpeed,
+	 pathHieght: x.sliceHeight,
+	 pathWidth: x.pathWidth,
+	 areaConstant: x.AreaConstant,
+	 compressionVolume: x.CompressionVolume
+	}
+  return y;
+}
 progress.setSteps(Pen.meshes.length*2 + 3);
 
 slicer.setSliceHeight(Pen.sliceHeight);
@@ -50,18 +61,7 @@ for (var i = 0; i < Pen.meshes.length; ++i) {
   progress.step();
 }
 
-var PenMaterialCalibration = {
-  pathSpeed: Pen.pathSpeed,
-  depositionRate: Pen.depositionRate,
-  pathWidth: Pen.pathWidth,
-  pathHeight:Pen.sliceHeight,
-  pushout: Pen.pushout,
-  suckback: Pen.suckback,
-  suckbackDelay: Pen.suckbackDelay,
-  clearance: Pen.clearance,
-  pausePaths: Pen.pausePaths,
-  pitch: Pen.pitch
-};
+var PenMaterialCalibration = makeCalib(Pen);
 
 var fabWriter = fabFile.fabAtHomeModel2Writer();
 

@@ -40,6 +40,8 @@
 #include "shared/toolscript/amfregiontsi.h"
 #include "shared/amf/amfregion.h"
 
+#include <stdio.h>
+
 struct PrintablePaths {
   float z;
   int id;
