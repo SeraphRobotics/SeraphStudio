@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'modifytoolandprintersettingsdialog.ui'
 **
-** Created: Sat Jun 11 01:25:42 2011
+** Created: Sun Mar 11 22:33:36 2012
 **      by: Qt User Interface Compiler version 4.6.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!

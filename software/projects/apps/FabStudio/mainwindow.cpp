@@ -51,6 +51,7 @@
 // for opening web browser
 #include <QDesktopServices>
 #include <QUrl>
+#include <QDateTime>
 
 #include "shared/slicer/slicer.h"
 #include "arrangebuildtray.h"
@@ -73,6 +74,17 @@ MainWindow::MainWindow(QWidget *parent)
       selected_object_(0),
       load_object_file_thread_(0)
 {
+
+
+
+  QDateTime curdt = QDateTime::currentDateTime();
+  QDateTime settime = QDateTime(QDate::fromString("12:06:2012", "d':'MM':'yyyy"),QTime(0,0));
+
+  if (curdt>settime){
+    QMessageBox::information(this->centralWidget(),"info","Your version has expired. please contact Seraph Robotics");
+    QTimer::singleShot(0,this,SLOT(close()));
+  }
+
 
   // Initialize the main window's settings
   ui->setupUi(this);
@@ -158,7 +170,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 
   useAdvancedMode(true);
-  setAlwaysShowStartupInformation(settings.value(kAlwaysShowStartupInformationSettingKey, false).toBool());
+//  setAlwaysShowStartupInformation(settings.value(kAlwaysShowStartupInformationSettingKey, false).toBool());
 }
 
 

@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'printpanel.ui'
 **
-** Created: Fri Mar 9 01:18:07 2012
+** Created: Sun Mar 11 22:55:37 2012
 **      by: Qt User Interface Compiler version 4.6.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -157,7 +157,7 @@ public:
 
         retranslateUi(PrintPanel);
 
-        stackedWidget->setCurrentIndex(0);
+        stackedWidget->setCurrentIndex(1);
 
 
         QMetaObject::connectSlotsByName(PrintPanel);
