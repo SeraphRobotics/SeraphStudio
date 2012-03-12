@@ -54,8 +54,9 @@
 #include "printthread.h"
 #include "modifytoolandprintersettingsdialog.h"
 
-static const QString kFabInterpreterProgramSettingKey = "fabinterpreter";
-static const QString kFabInterpreterDefault = "fab2.exe";
+
+static const QString kFabInterpreterProgramSettingKey = "SeraphPrint";
+static const QString kFabInterpreterDefault = "SeraphPrint.exe";
 
 /// Every time this many renderable paths are added to the preview paths by
 /// an executing tool script, the print panel will recreate its open-GL
@@ -442,38 +443,43 @@ void PrintPanel::on_sendToPrinter_clicked() {
   QFileInfo config_file_info(tool_script_->printerName() + ".config");
 
   QString fab_file_argument(fab_file_info.canonicalFilePath());
-  if (fab_file_argument.startsWith('"', Qt::CaseInsensitive)) {
-    // turn "c:\path\etc" into <c:\path\etc>
-    fab_file_argument.replace(0, 1, '<');
-    fab_file_argument.replace(fab_file_argument.length() - 1, 1, '>');
-  } else {
-    fab_file_argument.prepend('<');
-    fab_file_argument.append('>');
-  }
-  fab_file_argument.prepend("--fabfile=");
-  QString config_file_argument(config_file_info.canonicalFilePath());
-  if (config_file_argument.startsWith('"', Qt::CaseInsensitive)) {
-    config_file_argument.replace(0, 1, '<');
-    config_file_argument.replace(fab_file_argument.length() - 1, 1, '>');
-  } else {
-    config_file_argument.prepend('<');
-    config_file_argument.append('>');
-  }
-  config_file_argument.prepend("--config=");
+//  if (fab_file_argument.startsWith('"', Qt::CaseInsensitive)) {
+//    // turn "c:\path\etc" into <c:\path\etc>
+//    fab_file_argument.replace(0, 1, '<');
+//    fab_file_argument.replace(fab_file_argument.length() - 1, 1, '>');
+//  } else {
+//    fab_file_argument.prepend('<');
+//    fab_file_argument.append('>');
+//  }
+  fab_file_argument.prepend("-f ");
+//  QString config_file_argument(config_file_info.canonicalFilePath());
+//  if (config_file_argument.startsWith('"', Qt::CaseInsensitive)) {
+//    config_file_argument.replace(0, 1, '<');
+//    config_file_argument.replace(fab_file_argument.length() - 1, 1, '>');
+//  } else {
+//    config_file_argument.prepend('<');
+//    config_file_argument.append('>');
+//  }
+//  config_file_argument.prepend("--config=");
+
+  qDebug()<<fab_file_argument;
+  QMessageBox::information(this, tr("INFO"),
+                                 fab_file_argument);
+
 
   do {
 
     //FAB2 --config=<C:\thisisthefilepath\to\config\file> --fabfile=<C:\thisisthefilepath\to\the\fab\file.fab>
 
-    process.start(fab2, QStringList() << config_file_argument << fab_file_argument);
+    process.start(fab2, QStringList() << fab_file_argument);//<< config_file_argument << fab_file_argument);
 
     if (!process.waitForStarted()) {
       // the program couldn't start; ask the user where the interpreter is...
       QString fab2 =
           QFileDialog::getOpenFileName(this,
                                        QString("Missing FabInterpreter!"),
-                                       QDir::currentPath(),
-                                       "FabInterpreter (fab2.exe)");
+                                       QDir::currentPath());//,
+//                                       "FabInterpreter (fab2.exe)");
       if (fab2.isEmpty()) {
         return;
       }

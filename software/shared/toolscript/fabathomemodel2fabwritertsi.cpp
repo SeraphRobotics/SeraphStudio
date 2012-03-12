@@ -142,7 +142,7 @@ void FabAtHomeModel2FabWriterTSI::print() {
 
   QMap<QString,int> nameIDmap;
 
-  QDomElement pallete = fab_document_.createElement("pallete");
+  QDomElement pallete = fab_document_.createElement("palette");
 
 
   for (int i = 0; i < materials_list_.size(); ++i) {
@@ -152,6 +152,10 @@ void FabAtHomeModel2FabWriterTSI::print() {
       QDomElement material_calibration = fab_document_.createElement("material");
       QString name = material->value("name");
       nameIDmap.insert(name,i+1);
+      QDomElement id_element= fab_document_.createElement("id");
+      id_element.appendChild(fab_document_.createTextNode(QString::number(i+1)));
+      material_calibration.appendChild(id_element);
+
 
       for (MaterialProperties::iterator j = material->begin(); j != material->end(); ++j) {
         QDomElement calibration_element
@@ -239,7 +243,7 @@ QDomElement FabAtHomeModel2FabWriterTSI::makePathElement(Path* path,int id=0, do
 
 
     if(!speed && id){ // add the name of the material that's being used for this path
-        QDomElement material_calibration_name = fab_document_.createElement("material");
+        QDomElement material_calibration_name = fab_document_.createElement("materialID");
         QString text = QString::number(id);
         material_calibration_name.appendChild(fab_document_.createTextNode(text));
         pathDomElement.appendChild(material_calibration_name);

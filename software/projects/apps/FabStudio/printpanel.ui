@@ -42,7 +42,7 @@
     <item>
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="pageBeforePrint">
        <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -180,7 +180,7 @@ Be sure to have extra supplies on hand if you are printing a large model.  This 
            <string>Save to a File (Advanced)</string>
           </property>
           <property name="description">
-           <string>Store this print job in a .FAB file.  This will save only the information the printer needs and not the original objects.</string>
+           <string>Store this print job in a .XDFL file.  This will save only the information the printer needs and not the original objects.</string>
           </property>
          </widget>
         </item>
