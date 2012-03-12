@@ -462,9 +462,9 @@ void PrintPanel::on_sendToPrinter_clicked() {
 //  }
 //  config_file_argument.prepend("--config=");
 
-  qDebug()<<fab_file_argument;
-  QMessageBox::information(this, tr("INFO"),
-                                 fab_file_argument);
+//  qDebug()<<fab_file_argument;
+//  QMessageBox::information(this, tr("INFO"),
+//                                 fab_file_argument);
 
 
   do {

@@ -68,9 +68,9 @@ int main(int argc, char *argv[]) {
 
   // Initialize the application
   QApplication a(argc, argv);
-  QCoreApplication::setOrganizationName("Fab@Home");
-  QCoreApplication::setOrganizationDomain("fabathome.org");
-  QCoreApplication::setApplicationName("Fab Studio");
+  QCoreApplication::setOrganizationName("Seraph");
+  QCoreApplication::setOrganizationDomain("seraphrobotics.com");
+  QCoreApplication::setApplicationName("SeraphStudio");
 
   // Set up a splash screen
   QPixmap pixmap(":/media/fabstudio.png");

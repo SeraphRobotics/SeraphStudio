@@ -81,7 +81,7 @@ void PatherTSI::doPathing(QScriptValue amf_region) {
 
   // For debugging--pathstacks are usable with the VisualPather program to
   // get an image of each slice
-  pather_.getPathStack().writeToVisualizerFile("doubleedge.pathstack");
+//  pather_.getPathStack().writeToVisualizerFile("doubleedge.pathstack");
 
   argument->setPaths(new PathStack(pather_.getPathStack()));
 }
@@ -104,7 +104,7 @@ void PatherTSI::doPathing(QScriptValue amf_region, QScriptValue slice_stack_scri
 
     // For debugging--pathstacks are usable with the VisualPather program to
     // get an image of each slice
-    pather_.getPathStack().writeToVisualizerFile("doubleedge.pathstack");
+//    pather_.getPathStack().writeToVisualizerFile("doubleedge.pathstack");
 
     argument->addPaths(new PathStack(pather_.getPathStack()));
 }
