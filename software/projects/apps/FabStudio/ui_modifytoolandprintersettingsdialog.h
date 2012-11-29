@@ -182,7 +182,7 @@ public:
     {
         ModifyToolAndPrinterSettingsDialog->setWindowTitle(QApplication::translate("ModifyToolAndPrinterSettingsDialog", "Modify Tool and Printer Settings", 0, QApplication::UnicodeUTF8));
         label->setText(QApplication::translate("ModifyToolAndPrinterSettingsDialog", "Make any changes to the print settings and tool-script below.  Once you are finished, close this dialog to return to printing.", 0, QApplication::UnicodeUTF8));
-        label_5->setText(QApplication::translate("ModifyToolAndPrinterSettingsDialog", "<b>This version of FabStudio does not support script editing.</b>", 0, QApplication::UnicodeUTF8));
+        label_5->setText(QApplication::translate("ModifyToolAndPrinterSettingsDialog", "<b>This version of SeraphStudio does not support script editing.</b>", 0, QApplication::UnicodeUTF8));
         basicAdvancedTabs->setTabText(basicAdvancedTabs->indexOf(tabBasic), QApplication::translate("ModifyToolAndPrinterSettingsDialog", "Basic Info", 0, QApplication::UnicodeUTF8));
         basicAdvancedTabs->setTabText(basicAdvancedTabs->indexOf(tabParameters), QApplication::translate("ModifyToolAndPrinterSettingsDialog", "Parameters", 0, QApplication::UnicodeUTF8));
         basicAdvancedTabs->setTabText(basicAdvancedTabs->indexOf(tabScript), QApplication::translate("ModifyToolAndPrinterSettingsDialog", "Script", 0, QApplication::UnicodeUTF8));
