@@ -78,7 +78,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 
   QDateTime curdt = QDateTime::currentDateTime();
-  QDateTime settime = QDateTime(QDate::fromString("12:06:2012", "d':'MM':'yyyy"),QTime(0,0));
+  QDateTime settime = QDateTime(QDate::fromString("12:12:2012", "d':'MM':'yyyy"),QTime(0,0));
 
   if (curdt>settime){
     QMessageBox::information(this->centralWidget(),"info","Your version has expired. please contact Seraph Robotics");
@@ -88,7 +88,7 @@ MainWindow::MainWindow(QWidget *parent)
 
   // Initialize the main window's settings
   ui->setupUi(this);
-  setWindowTitle("Fab Studio");
+  setWindowTitle("Seraph Studio");
 
   // Receive key press events
   setFocusPolicy(Qt::StrongFocus);
