@@ -1,0 +1,130 @@
+ <toolScript name="Green Taper Stochastic printing"
+             description="Tool:   10cc syringe of clear Tip1Valve with a green taper tip"
+             printer="Testing">
+
+  <settings>
+    <!-- Settings that are not per-tool -->
+    <printAcceleration text="Print Acceleration" units="mm/s^2">100</printAcceleration>
+  </settings>
+
+   <!-- Expose settings for the first tool -->
+   <tool name="Green Taper Tip1Valve" material="Tip1Valve" scriptVariable="Tip1Valve">
+     <settings>
+       <sliceHeight text="Slice Height" units="mm">2.2</sliceHeight>
+       <!--Top speed in millimeters/second for this tool during execution of path.-->
+         <pathSpeed text="Path Speed" units="mm/s">30</pathSpeed>
+       <!--Width of the path in millimeters.-->
+         <pathWidth text="Path Width" units="mm">1.4</pathWidth>
+       <!--(millimeters of plunger motion)/(millimeters tool travel) along deposition path.-->
+         <depositionRate text="DepositionRate" units="mm/mm">0.00</depositionRate>
+       <!--Seconds of early dispensing to start flow quickly.-->
+         <pushout text="Pushout" units="seconds">0.06</pushout>
+       <!--Seconds reverse plunger motion to stop flow quickly.-->
+         <suckback text="Suckback" units="seconds">0.06</suckback>
+       <!--Seconds to delay suckback by.-->
+         <suckbackDelay text="Suckback Delay" units="seconds">0</suckbackDelay>
+       <!--Millimeters of clearance between tip and last layer when traversing.-->
+         <clearance text="Clearance" units="mm">0</clearance>
+       <!--Number of paths after which to trigger an automatic pause.-->
+         <pausePaths text="Pause after # Paths" units="# of paths">300</pausePaths>
+       <!--no comment-->
+         <pitch text="Pitch" units="?">0.000397</pitch>
+     </settings>
+   </tool>
+   <tool name="Green Taper Tip2Valve" material="Tip2Valve" scriptVariable="Tip2Valve">
+     <settings>
+       <sliceHeight text="Slice Height" units="mm">2.2</sliceHeight>
+       <!--Top speed in millimeters/second for this tool during execution of path.-->
+       <pathSpeed text="Path Speed" units="mm/s">30</pathSpeed>
+       <!--Width of the path in millimeters.-->
+       <pathWidth text="Path Width" units="mm">1.4</pathWidth>
+       <!--(millimeters of plunger motion)/(millimeters tool travel) along deposition path.-->
+       <depositionRate text="DepositionRate" units="mm/mm">0.00</depositionRate>
+       <!--Seconds of early dispensing to start flow quickly.-->
+       <pushout text="Pushout" units="seconds">0.06</pushout>
+       <!--Seconds reverse plunger motion to stop flow quickly.-->
+       <suckback text="Suckback" units="seconds">0.06</suckback>
+       <!--Seconds to delay suckback by.-->
+       <suckbackDelay text="Suckback Delay" units="seconds">0</suckbackDelay>
+       <!--Millimeters of clearance between tip and last layer when traversing.-->
+       <clearance text="Clearance" units="mm">0</clearance>
+       <!--Number of paths after which to trigger an automatic pause.-->
+       <pausePaths text="Pause after # Paths" units="# of paths">300</pausePaths>
+       <!--no comment-->
+       <pitch text="Pitch" units="?">0.000397</pitch>
+     </settings>
+   </tool>
+
+  <printScript>
+  <![CDATA[
+
+progress.setSteps(Tip1Valve.meshes.length*2 + Tip2Valve.meshes.length*2+ 3);
+
+slicer.setSliceHeight(Tip1Valve.sliceHeight);
+pather.set("PathWidth", Tip1Valve.pathWidth);
+for (var i = 0; i < Tip1Valve.meshes.length; ++i) {
+  progress.log("Slicing Tip1Valve Mesh");
+  slicer.doSlicing(Tip1Valve.meshes[i]);
+  progress.step();
+  progress.log("Pathing Tip1Valve Mesh");
+  pather.doPathing(Tip1Valve.meshes[i]);
+  progress.step();
+}
+
+slicer.setSliceHeight(Tip2Valve.sliceHeight);
+pather.set("PathWidth", Tip2Valve.pathWidth);
+for (var i = 0; i < Tip2Valve.meshes.length; ++i) {
+  progress.log("Slicing Tip2Valve Mesh");
+  slicer.doSlicing(Tip2Valve.meshes[i]);
+  progress.step();
+  progress.log("Pathing Tip2Valve Mesh");
+  pather.doPathing(Tip2Valve.meshes[i]);
+  progress.step();
+}
+
+
+var Tip1ValveMaterialCalibration = {
+  pathSpeed: Tip1Valve.pathSpeed,
+  depositionRate: 0.0,
+  pathWidth: Tip1Valve.pathWidth,
+  depositionRate: Tip1Valve.depositionRate,
+  pushout: Tip1Valve.pushout,
+  suckback: Tip1Valve.suckback,
+  suckbackDelay: Tip1Valve.suckbackDelay,
+  clearance: Tip1Valve.clearance,
+  pausePaths: Tip1Valve.pausePaths,
+  pitch: Tip1Valve.pitch
+};
+
+var Tip2ValveMaterialCalibration = {
+  pathSpeed: Tip2Valve.pathSpeed,
+  depositionRate: 0.0,
+  pathWidth: Tip2Valve.pathWidth,
+  depositionRate: Tip2Valve.depositionRate,
+  pushout: Tip2Valve.pushout,
+  suckback: Tip2Valve.suckback,
+  suckbackDelay: Tip2Valve.suckbackDelay,
+  clearance: Tip2Valve.clearance,
+  pausePaths: Tip2Valve.pausePaths,
+  pitch: Tip2Valve.pitch
+};
+
+var fabWriter = fabFile.fabAtHomeModel2Writer();
+
+fabWriter.addMeshes("Tip1Valve", Tip1ValveMaterialCalibration, Tip1Valve.meshes);
+progress.step();
+
+fabWriter.addMeshes("Tip2Valve", Tip2ValveMaterialCalibration, Tip2Valve.meshes);
+progress.step();
+
+fabWriter.sortBottomUp();
+fabWriter.setPrintAcceleration(printAcceleration);
+
+progress.step();
+fabWriter.print();
+
+progress.finish();
+
+  ]]>
+  </printScript>
+</toolScript>
