@@ -65,7 +65,9 @@ FORMS += mainwindow.ui \
     firstexecutiondialog.ui \
     aboutdialog.ui
 INCLUDEPATH += ../../../
+
 RESOURCES += resources.qrc
+
 include("common.pro")
 include("shared-amf.pro")
 include("shared.pro")

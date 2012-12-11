@@ -1,7 +1,6 @@
 <RCC>
-    <qresource prefix="/" >
+    <qresource prefix="/">
         <file>media/check.png</file>
-        <file>media/banner.PNG</file>
         <file>media/positioning-tool.png</file>
         <file>media/fabstudio.png</file>
         <file>media/icon.png</file>
