@@ -91,7 +91,7 @@ bool TodoStructSTLSortPredicateByTime(const TodoStruct* lhs, const TodoStruct* r
 
 
 //----[  TodoReport  ]---------------------------------------------------------
-TodoReport::TodoReport() : text(0) {
+TodoReport::TodoReport() : text("") {
 }
 
 
