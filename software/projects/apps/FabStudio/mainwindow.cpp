@@ -323,6 +323,8 @@ void MainWindow::addObject(const QString& source_file, PrintableObject* object) 
   QMutexLocker mutex(&printable_objects_mutex_);
   printable_objects_.append(object);
   object->snapToRestOnXYPlane();
+
+
 }
 
 
@@ -920,6 +922,12 @@ void MainWindow::finishedLoadObjectFile() {
   load_objects_panel_->setEnabled(true);
   delete load_object_file_thread_;
   load_object_file_thread_ = 0;
+
+
+  selectObject( printable_objects_.last());
+  position_objects_panel_->manipulatedObject(selected_object_);
+  showPositionObjectsPanel();
+
   showMaterialsPanel();
 }
 
