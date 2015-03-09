@@ -42,6 +42,13 @@ void ScanForObjectFilesThread::run() {
   directories.append(QDir::currentPath());
   directories.append(QDir::homePath());
 
+  QFileInfoList l= QDir::drives();
+  foreach(QFileInfo i, l){
+      if(i.absoluteDir()!=QDir::root()){
+          directories.append(i.absolutePath());
+      }
+  }
+
   while (!directories.isEmpty()) {
 
     // Pop the first directory from the worklist
