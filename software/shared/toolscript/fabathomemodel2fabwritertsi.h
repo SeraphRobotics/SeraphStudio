@@ -98,6 +98,7 @@ private:
   MaterialsList materials_list_;
   PrintableRegions regions_;
 
+  int material_numbers;
 
   /// Clearances and speeds for XDFL
   double hieght;

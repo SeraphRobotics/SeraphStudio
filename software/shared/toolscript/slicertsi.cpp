@@ -82,6 +82,7 @@ QScriptValue SlicerTSI::doSlicing(QScriptValue amf_region) {
     throwError("Invalid object passed to slicer's doSlicing()");
   }
 
+//  printf("\nSlicing region: %s",argument->uniqueName().toStdString().c_str());
   if (!slicer_->doSlicing(argument->region(), callback_)) {
     throwError("Unable to perform slicing:  " + slicer_->getLastErrorString());
   }

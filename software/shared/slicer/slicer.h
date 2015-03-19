@@ -77,7 +77,7 @@ public:
    */
   enum Error {
     kNone,
-    kGenericError,
+    kGenericError
   };
 
 

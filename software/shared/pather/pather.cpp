@@ -50,6 +50,7 @@ FlexibleSettings& Pather::getSettings() {
 //----[  doPathing  ]----------------------------------------------------------
 bool Pather::doPathing(const SliceStack& slices,
                        PatherProgressCallback* callback) {
+  path_stack_ = PathStack();
   const SliceArray& slice_array = slices.getSlices();
 
   // Let the callback know how many slices are going to be computed

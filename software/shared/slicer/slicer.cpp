@@ -296,6 +296,15 @@ QString Slicer::getErrorString(Error error) {
 }
 
 const SliceStack& Slicer::getSliceStack(){
+//    int n=0;
+//    foreach(Slice s,slicestack.getSlices()){
+//        n=max(n,s.getMaterials().size());
+//        foreach(SliceMaterial m,s.getMaterials()){
+//            printf("\nID:%i",m.getMaterialID());
+//        }
+//    }
+//    printf("\nNumMaterials: %i",n);
+//    printf("\nSlices: %i",slicestack.getSlices().size());
   return slicestack;
 }
 

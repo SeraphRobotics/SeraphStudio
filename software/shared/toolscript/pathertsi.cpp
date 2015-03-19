@@ -73,11 +73,14 @@ void PatherTSI::doPathing(QScriptValue amf_region) {
     throwError("AMF Region " + argument->uniqueName() + " has not been sliced");
     return;
   }
+//  printf("\nPATHING REGION: %s",argument->uniqueName().toStdString().c_str());
+//  printf("\nNUMSLIDES: %i",argument->slices()->getSlices().size());
 
   if (!pather_.doPathing(*argument->slices(), callback_)) {
     throwError("Unable to perform pathing:  " + pather_.getLastErrorString());
     return;
   }
+//  printf("\nNUM PATHSLICES:%i\n",pather_.getPathStack().getPathSlices().size());
 
   // For debugging--pathstacks are usable with the VisualPather program to
   // get an image of each slice
