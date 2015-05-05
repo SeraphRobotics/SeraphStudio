@@ -161,9 +161,9 @@ void FabAtHomeModel2FabWriterTSI::print() {
       QDomElement material_calibration = fab_document_.createElement("material");
 //      QString name = material->value("name");
 //      nameIDmap.insert(name,i+1);
-      QDomElement id_element= fab_document_.createElement("id");
-      id_element.appendChild(fab_document_.createTextNode(material->value("id")));
-      material_calibration.appendChild(id_element);
+//      QDomElement id_element= fab_document_.createElement("id");
+//      id_element.appendChild(fab_document_.createTextNode(material->value("id")));
+//      material_calibration.appendChild(id_element);
 
 
       for (MaterialProperties::iterator j = material->begin(); j != material->end(); ++j) {
