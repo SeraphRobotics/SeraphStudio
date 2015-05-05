@@ -78,10 +78,10 @@ bool STLFile::read(QString path) {
   // Detect ASCII vs. binary.
   // Read the last 20 characters of the file and
   // search for "endsolid" (indicates ASCII file).
-  char buffer[20];
-  stream.skipRawData(stl.size() - 19);
-  stream.readRawData(buffer, 20);
-  buffer[19] = '\0';
+  char buffer[200];
+  stream.skipRawData(stl.size() - 190);
+  stream.readRawData(buffer, 200);
+  buffer[199] = '\0';
   line = buffer;
 
   stl.close();
@@ -126,7 +126,7 @@ bool STLFile::readASCII(QString path) {
 
   while (!stream.atEnd()) {
     line = stream.readLine().trimmed();
-    if (line.toLower().contains("endsolid")) {
+    if (line.contains("endsolid", Qt::CaseInsensitive)) {
       // done
       file.close();
       break;
