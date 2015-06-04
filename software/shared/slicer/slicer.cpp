@@ -264,12 +264,13 @@ bool Slicer::doSlicing(const AMFRegion* input_region,
       const FAHLoopInXYPlane& loop = innerloops.at(i);
       int tightest_container_index = -1;
       for (int j = 0; j < regions.size(); j++) {
-        if (regions.at(j).getOuterBoundary().contains(loop) &&
+        if (regions.at(j).getOuterBoundary().pointInside(loop.points.first()) &&
             (tightest_container_index < 0 ||
-             regions.at(tightest_container_index).getOuterBoundary().contains(regions.at(j).getOuterBoundary()))) {
+             regions.at(tightest_container_index).getOuterBoundary().pointInside(regions.at(j).getOuterBoundary().points.first() ))) {
           tightest_container_index = j;
         }
       }
+      qDebug()<<"inner loop "<<i<<"contained by "<<tightest_container_index;
       // we should always have a container for an inner
       // boundary, otherwise something is wrong with the
       // model.

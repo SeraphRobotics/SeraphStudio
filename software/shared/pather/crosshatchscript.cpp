@@ -150,7 +150,7 @@ bool CrosshatchScript::runPathingAlgorithm(
       // We contract by 5/2*(Path Width) because the outer boundary was already
       // contracted by 3/2 a path-width above (for the double boundary)
       FAHLoopInXYPlane loop = region.getOuterBoundary();
-      confirm(loop.sense() == FAHLoopInXYPlane::kCounterClockwise);
+      //confirm(loop.sense() == FAHLoopInXYPlane::kCounterClockwise);
       loop.expand(-5.0 * path_width_ / 2.0, &outer_boundary_loops);
       if (outer_boundary_loops.isEmpty()) {
         // this boundary is too small to support any pathing
@@ -170,7 +170,7 @@ bool CrosshatchScript::runPathingAlgorithm(
       const QVector<FAHLoopInXYPlane> inner_boundaries = region.getInnerBoundaries();
       for (int i = 0; i < inner_boundaries.size(); ++i) {
         FAHLoopInXYPlane loop = inner_boundaries.at(i);
-        confirm(loop.sense() == FAHLoopInXYPlane::kClockwise);
+        //confirm(loop.sense() == FAHLoopInXYPlane::kClockwise);
         QVector<FAHLoopInXYPlane> loops;
         loop.expand(-5.0 * path_width_ / 2.0, &loops);
         bool contained = false;
