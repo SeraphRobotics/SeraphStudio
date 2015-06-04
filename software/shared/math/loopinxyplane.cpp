@@ -193,7 +193,7 @@ bool LoopInXYPlane::pointInside(const Vector3& point) const {
   // An even number of intersections (including 0) means that this point is
   // not within the loop.  If the sense of this loop is counter-clockwise,
   // that means that the point is not inside;
-  return (intersections % 2) == (sense() == kCounterClockwise ? 1 : 0);
+  return (intersections % 2);// == (sense() == kCounterClockwise ? 1 : 0);
 }
 
 

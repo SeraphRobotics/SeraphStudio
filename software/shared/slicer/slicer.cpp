@@ -199,40 +199,39 @@ bool Slicer::doSlicing(const AMFRegion* input_region,
 
     // Discover all of the loops in the segments
     QVector<FAHLoopInXYPlane> loops;
+    QVector<FAHLoopInXYPlane> innerloops;
     findLoops(segments, &loops);
 
     // pull out all of the outer boundaries into regions
     QVector<SliceMaterialRegion> regions;
-    for (int i = loops.size() - 1; i >= 0; --i) {
+    for (int i = 0; i<loops.size(); i++) {
       const FAHLoopInXYPlane& loop = loops.at(i);
+      const FAHVector3 testPoint = loop.points.first();
 
-      //Select a test point for the loop
-      FAHVector3 testpoint= loop.points.at(0);
+
       // determine how many loops it is contained in.
       int contained = 0;
 
-      for(int j=0; j<regions.size(); j++){
-          SliceMaterialRegion region = regions.at(j);
-          if(region.getOuterBoundary().pointInside(testpoint)){contained++;}
-      }
       for(int k=0; k<loops.size();k++){
           if(k!=i){
-              if(loops.at(k).pointInside(testpoint)){contained++;}
+              if(loops.at(k).pointInside(testPoint) ){contained+=1;}
           }
       }
 
       //if contained in even number its an eternal loop
-      if(contained=0 || !(contained%2)){
+      if(0==contained || 0==(contained%2)){
           // add as the outer boundary of a region
           SliceMaterialRegion region;
           region.setOuterBoundary(loops.at(i));
-          loops.remove(i);
           regions.append(region);
+          qDebug()<<"outer loop contained = "<<contained;
+          qDebug()<<"Loop sense: "<<loop.sense();
       }else{
-
-          //do nothing yet
+          innerloops.append(loops.at(i));
+          qDebug()<<"inner loop contained = "<<contained;
+          qDebug()<<"Loop sense: "<<loop.sense();
       }
-      qDebug()<<"contained = "<<contained;
+
 
 //      switch (loop.sense()) {
 //      case FAHLoopInXYPlane::kCounterClockwise: {
@@ -261,10 +260,10 @@ bool Slicer::doSlicing(const AMFRegion* input_region,
     // for each of the inner boundaries, find the tightest
     // outer boundary that contains that inner boundary
     // and make this inner boundary a child of that region
-    for (int i = loops.size() - 1; i >= 0; --i) {
-      const FAHLoopInXYPlane& loop = loops.at(i);
+    for (int i = innerloops.size() - 1; i >= 0; --i) {
+      const FAHLoopInXYPlane& loop = innerloops.at(i);
       int tightest_container_index = -1;
-      for (int j = 0; j < regions.size(); ++j) {
+      for (int j = 0; j < regions.size(); j++) {
         if (regions.at(j).getOuterBoundary().contains(loop) &&
             (tightest_container_index < 0 ||
              regions.at(tightest_container_index).getOuterBoundary().contains(regions.at(j).getOuterBoundary()))) {
