@@ -205,28 +205,57 @@ bool Slicer::doSlicing(const AMFRegion* input_region,
     QVector<SliceMaterialRegion> regions;
     for (int i = loops.size() - 1; i >= 0; --i) {
       const FAHLoopInXYPlane& loop = loops.at(i);
-      switch (loop.sense()) {
-      case FAHLoopInXYPlane::kCounterClockwise: {
-        // add as the outer boundary of a region
-        SliceMaterialRegion region;
-        region.setOuterBoundary(loops.at(i));
-        loops.remove(i);
-        regions.append(region);
-      } break;
-      case FAHLoopInXYPlane::kClockwise:
-        // don't do anything with this yet
-        break;
-      default:
-      case FAHLoopInXYPlane::kUndefined:
-        // discard this malformed loop
-        loops.remove(i);
-        if (callback) {
-          QString issue_text;
-          QTextStream(&issue_text) << "malformed loop removed";
-          callback->encounteredIssue(issue_text);
-        }
-        break;
+
+      //Select a test point for the loop
+      FAHVector3 testpoint= loop.points.at(0);
+      // determine how many loops it is contained in.
+      int contained = 0;
+
+      for(int j=0; j<regions.size(); j++){
+          SliceMaterialRegion region = regions.at(j);
+          if(region.getOuterBoundary().pointInside(testpoint)){contained++;}
       }
+      for(int k=0; k<loops.size();k++){
+          if(k!=i){
+              if(loops.at(k).pointInside(testpoint)){contained++;}
+          }
+      }
+
+      //if contained in even number its an eternal loop
+      if(contained=0 || !(contained%2)){
+          // add as the outer boundary of a region
+          SliceMaterialRegion region;
+          region.setOuterBoundary(loops.at(i));
+          loops.remove(i);
+          regions.append(region);
+      }else{
+
+          //do nothing yet
+      }
+      qDebug()<<"contained = "<<contained;
+
+//      switch (loop.sense()) {
+//      case FAHLoopInXYPlane::kCounterClockwise: {
+//        // add as the outer boundary of a region
+//        SliceMaterialRegion region;
+//        region.setOuterBoundary(loops.at(i));
+//        loops.remove(i);
+//        regions.append(region);
+//      } break;
+//      case FAHLoopInXYPlane::kClockwise:
+//        // don't do anything with this yet
+//        break;
+//      default:
+//      case FAHLoopInXYPlane::kUndefined:
+//        // discard this malformed loop
+//        loops.remove(i);
+//        if (callback) {
+//          QString issue_text;
+//          QTextStream(&issue_text) << "malformed loop removed";
+//          callback->encounteredIssue(issue_text);
+//        }
+//        break;
+//      }
     }
 
     // for each of the inner boundaries, find the tightest
