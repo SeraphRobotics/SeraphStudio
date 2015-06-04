@@ -154,7 +154,8 @@ bool SimpleCrossHatchPather::runPathingAlgorithm(
     }
 
     QVector<FAHLoopInXYPlane> outer_boundary_loops;
-    QVector<FAHLoopInXYPlane> expanded_border_loops;
+    QVector<FAHLoopInXYPlane> expanded_outer_border_loops;
+    QVector<FAHLoopInXYPlane> expanded_inner_border_loops;
 
     { // Get the contracted the outer boundary
       // We contract by 5/2*(Path Width) because the outer boundary was already
@@ -172,7 +173,7 @@ bool SimpleCrossHatchPather::runPathingAlgorithm(
         }
         return true; // don't finish the fill-pathing
       } else {
-        expanded_border_loops += outer_boundary_loops;
+        expanded_outer_border_loops += outer_boundary_loops;
       }
     }
 
@@ -196,21 +197,21 @@ bool SimpleCrossHatchPather::runPathingAlgorithm(
             if (callback != NULL) callback->encounteredIssue(issue);
           }
           // loop is correctly contained by at least one outer boundary
-          expanded_border_loops += test_loop;
+          expanded_inner_border_loops += test_loop;
         }
       }
     }
 
     {
-      confirm(!expanded_border_loops.isEmpty()) else {
+      confirm(!expanded_outer_border_loops.isEmpty()) else {
         // break out because we need to split the segments, otherwise
         // the layer will get filled completely with really long
         // meaningless segments
         return true;
       }
-      for (int i = 0; i < expanded_border_loops.size(); ++i) {
-        expanded_border_loops[i].simplify(); // improve speed
-        const FAHLoopInXYPlane& loop = expanded_border_loops.at(i);
+      for (int i = 0; i < expanded_outer_border_loops.size(); ++i) {
+        expanded_outer_border_loops[i].simplify(); // improve speed
+        const FAHLoopInXYPlane& loop = expanded_outer_border_loops.at(i);
         QVector<FAHLine> old_segments;
         old_segments += segments;
         segments.clear();
@@ -221,7 +222,25 @@ bool SimpleCrossHatchPather::runPathingAlgorithm(
           segments += inside;
         }
       }
+
+      for (int i = 0; i < expanded_inner_border_loops.size(); ++i) {
+        expanded_inner_border_loops[i].simplify(); // improve speed
+        const FAHLoopInXYPlane& loop = expanded_inner_border_loops.at(i);
+        QVector<FAHLine> old_segments;
+        old_segments += segments;
+        segments.clear();
+        for (int j = 0; j < old_segments.size(); ++j) {
+          const FAHLine& current_segment = old_segments[j];
+          QVector<FAHLine> outside;
+          loop.findOuterSegments(current_segment, &outside);
+          segments += outside;
+        }
+      }
+
     }
+
+
+
 
     // Stitch together the segments.  This is done with a very brute-force
     // algorithm.

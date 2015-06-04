@@ -204,6 +204,70 @@ void LoopInXYPlane::setZ(float z) {
   }
 }
 
+void LoopInXYPlane::findOuterSegments(
+        const Line& segment,
+        QVector<Line>* outer_segments) const {
+
+  // we can't do anything with an incomplete loop
+  confirm(points.size() >= 3) else return;
+
+  // must have an output location
+  confirm(outer_segments != NULL) else return;
+
+  // Worklist algorithm for finding inner segments:
+  // 1. Add input segment to worklist
+  // 2. Create an empty finalized list
+  // 3. Get the next element from the worklist
+  // 4. For each edge in the loop, test for intersection with
+  //    the current element.
+  // 5. If there was an intersection and the point of intersection
+  //    is not one of the segment's end-points, split the segment
+  //    at the point of intersection and add both to the worklist.
+  // 6. If there was no such intersection, add the segment to
+  //    the finalized list.
+  // 7. Go to (2) if the worklist still has elements in it
+  // 8. For each entry in the finalized list, test its midpoint to see
+  //    if it is inside the loop.  If it is not, discard the segment.
+
+  QVector<Line> worklist;
+  worklist.append(segment);
+  outer_segments->clear();
+
+  while (worklist.isEmpty() == false) {
+    const Line& current_segment = worklist.at(0);
+    bool intersected = false;
+    for (int i = 1; i < points.size() + 1; ++i) {
+      Line loop_segment(points[i-1], points[i%points.size()]);
+      Vector3 intersection;
+      intersected = current_segment.intersectSegmentWithSegment2DXY(loop_segment, &intersection);
+      intersection.z = current_segment.a.z;
+      intersected = intersected && !current_segment.isEndpoint(intersection);
+      if (intersected) {
+        // split the segment in two
+        Line first(current_segment.a, intersection);
+        Line second(intersection, current_segment.b);
+        worklist.append(first);
+        worklist.append(second);
+        break;
+      }
+    }
+    if (!intersected) {
+      // this segment is finalized
+      outer_segments->append(current_segment);
+    }
+    worklist.remove(0);
+  }
+
+  // Iterate through and remove segments that are inside the loop.
+  // Go backward so that removing elements doesn't change our iterator.
+  for (int i = outer_segments->size() - 1; i >= 0; --i) {
+    if (pointInside(outer_segments->at(i).center())) {
+      outer_segments->remove(i);
+    }
+  }
+}
+
+
 
 void LoopInXYPlane::findInnerSegments(
         const Line& segment,

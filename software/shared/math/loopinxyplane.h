@@ -147,11 +147,16 @@ public:
    * Returns in inner_segments the longest components of 'segment' for which
    * all points are inside this loop and whose ends are either one of segment's
    * ends or are on a boundary of this loop.
-   * For counter-clockwise loops, this will return only segments inside the loop.
-   * For clockwise loops, this method returns segments outside the loop.
    */
   void findInnerSegments(const Line& segment,
                          QVector<Line>* inner_segments) const;
+  /**
+   * Returns in outer_segments the longest components of 'segment' for which
+   * all points are outside this loop and whose ends are either one of segment's
+   * ends or are on a boundary of this loop.
+   */
+  void findOuterSegments(const Line& segment,
+                         QVector<Line>* outer_segments) const;
 
   /**
    * Returns 'true' if the given segment intersects with the boundary of this loop
