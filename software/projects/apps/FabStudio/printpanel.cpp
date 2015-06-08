@@ -76,7 +76,7 @@ PrintPanel::PrintPanel(MainWindow* main_window, QWidget *parent) :
     gl_draw_list_(-1) {
 
   m_ui->setupUi(this);
-
+  send_thread_ = new SendToPrinterThread("",QStringList()<<"");
   resetDialog();
 }
 
@@ -421,7 +421,6 @@ void PrintPanel::disconnectPrintThreadSignals() {
 
 
 void PrintPanel::on_sendToPrinter_clicked() {
-  QProcess process;
 
   // Save out the fab file to a temporary location
   QString temporary_fab_file_name;
@@ -433,8 +432,6 @@ void PrintPanel::on_sendToPrinter_clicked() {
   }
   file.close();
 
-
-  todo("kwg8", "FAB2.EXE is win32-specific!  Need to change this when porting the interpreter to Qt");
   QSettings settings;
   QString fab2 = settings.value(kFabInterpreterProgramSettingKey,
                                 kFabInterpreterDefault).toString();
@@ -443,38 +440,24 @@ void PrintPanel::on_sendToPrinter_clicked() {
   QFileInfo config_file_info(tool_script_->printerName() + ".config");
 
   QString fab_file_argument(fab_file_info.canonicalFilePath());
-//  if (fab_file_argument.startsWith('"', Qt::CaseInsensitive)) {
-//    // turn "c:\path\etc" into <c:\path\etc>
-//    fab_file_argument.replace(0, 1, '<');
-//    fab_file_argument.replace(fab_file_argument.length() - 1, 1, '>');
-//  } else {
-//    fab_file_argument.prepend('<');
-//    fab_file_argument.append('>');
-//  }
+
   fab_file_argument.prepend("-f ");
-//  QString config_file_argument(config_file_info.canonicalFilePath());
-//  if (config_file_argument.startsWith('"', Qt::CaseInsensitive)) {
-//    config_file_argument.replace(0, 1, '<');
-//    config_file_argument.replace(fab_file_argument.length() - 1, 1, '>');
-//  } else {
-//    config_file_argument.prepend('<');
-//    config_file_argument.append('>');
-//  }
-//  config_file_argument.prepend("--config=");
 
-//  qDebug()<<fab_file_argument;
-//  QMessageBox::information(this, tr("INFO"),
-//                                 fab_file_argument);
+  //delete send_thread_;
+  send_thread_ = new SendToPrinterThread(fab2,QStringList() << fab_file_argument);
+  connect(send_thread_,SIGNAL(NoProgramFound()),this,SLOT(failed_to_send()));
+  connect(send_thread_,SIGNAL(finished()),send_thread_,SLOT(deleteLater()));
+  send_thread_->start();
 
-  int n=0;
-  do {
 
     //FAB2 --config=<C:\thisisthefilepath\to\config\file> --fabfile=<C:\thisisthefilepath\to\the\fab\file.fab>
+//    process.start(fab2, QStringList() << fab_file_argument);//<< config_file_argument << fab_file_argument);
 
-    process.start(fab2, QStringList() << fab_file_argument);//<< config_file_argument << fab_file_argument);
 
-    if (!process.waitForStarted()) {
-      // the program couldn't start; ask the user where the interpreter is...
+
+}
+
+void PrintPanel::failed_to_send(){
       QString fab2 =
           QFileDialog::getOpenFileName(this,
                                        QString("Missing SeraphPrint!"),
@@ -482,21 +465,11 @@ void PrintPanel::on_sendToPrinter_clicked() {
 //                                       "SeraphPrint (SeraphPrint.exe)");
       if (fab2.isEmpty()) {
         return;
-      }
-
+      }else{
+      QSettings settings;
       // save to permanent storage
       settings.setValue(kFabInterpreterProgramSettingKey,
                         fab2);
-
-      // retry launching the file
-      continue;
-    }else{
-          n=2;
-    }
-    n++;
-
-  } while (n<2);
-
-  //process.waitForFinished(-1);
-
+      on_sendToPrinter_clicked();
+      }
 }

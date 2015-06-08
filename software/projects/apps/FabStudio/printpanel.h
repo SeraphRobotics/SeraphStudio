@@ -34,6 +34,8 @@
 #include <QtGui/QDockWidget>
 #include <QSharedPointer>
 #include "shared/pather/patherimplementation.h"
+#include <QThread>
+#include <sendtoprinterthread.h>
 
 namespace Ui {
     class PrintPanel;
@@ -105,6 +107,8 @@ signals:
 
 private slots:
   void on_sendToPrinter_clicked();
+  void failed_to_send();
+
   void on_modifyPrintSettings_clicked();
   void on_savePrintJob_clicked();
   void on_abandonPrintJob_clicked();
@@ -152,6 +156,9 @@ private:
 
   /// The thread that executes printing
   PrintThread* print_thread_;
+
+  /// The thead for sending the job to the printer;
+  SendToPrinterThread* send_thread_;
 
   /// Current set of paths that were created by the print job.  This member use used
   /// soley for the purpose of rendering a preview; the actual print data will appear

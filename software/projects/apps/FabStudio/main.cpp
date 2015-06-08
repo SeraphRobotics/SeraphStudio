@@ -35,6 +35,7 @@
 #include <QDate>
 #include <QTime>
 #include <QSplashScreen>
+#include <QSettings>
 
 #include "common/todo.h"
 
@@ -71,6 +72,8 @@ int main(int argc, char *argv[]) {
   QCoreApplication::setOrganizationName("Seraph");
   QCoreApplication::setOrganizationDomain("seraphrobotics.com");
   QCoreApplication::setApplicationName("SeraphStudio");
+  // QSettings setup. These values will carry over in the rest of the application.
+  QSettings::setDefaultFormat(QSettings::IniFormat);
 
   // Set up a splash screen
   QPixmap pixmap(":/media/fabstudio.png");

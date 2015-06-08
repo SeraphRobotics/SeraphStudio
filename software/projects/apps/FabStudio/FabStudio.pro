@@ -30,7 +30,8 @@ SOURCES += main.cpp \
     renderablepath.cpp \
     arrangebuildtray.cpp \
     firstexecutiondialog.cpp \
-    aboutdialog.cpp
+    aboutdialog.cpp \
+    sendtoprinterthread.cpp
 HEADERS += mainwindow.h \
     toolbar.h \
     openglwidget.h \
@@ -54,7 +55,8 @@ HEADERS += mainwindow.h \
     renderablepath.h \
     arrangebuildtray.h \
     firstexecutiondialog.h \
-    aboutdialog.h
+    aboutdialog.h \
+    sendtoprinterthread.h
 FORMS += mainwindow.ui \
     toolbar.ui \
     loadobjectspanel.ui \
