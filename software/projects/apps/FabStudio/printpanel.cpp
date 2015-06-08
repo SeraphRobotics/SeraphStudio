@@ -466,7 +466,7 @@ void PrintPanel::on_sendToPrinter_clicked() {
 //  QMessageBox::information(this, tr("INFO"),
 //                                 fab_file_argument);
 
-
+  int n=0;
   do {
 
     //FAB2 --config=<C:\thisisthefilepath\to\config\file> --fabfile=<C:\thisisthefilepath\to\the\fab\file.fab>
@@ -477,9 +477,9 @@ void PrintPanel::on_sendToPrinter_clicked() {
       // the program couldn't start; ask the user where the interpreter is...
       QString fab2 =
           QFileDialog::getOpenFileName(this,
-                                       QString("Missing FabInterpreter!"),
+                                       QString("Missing SeraphPrint!"),
                                        QDir::currentPath());//,
-//                                       "FabInterpreter (fab2.exe)");
+//                                       "SeraphPrint (SeraphPrint.exe)");
       if (fab2.isEmpty()) {
         return;
       }
@@ -490,10 +490,13 @@ void PrintPanel::on_sendToPrinter_clicked() {
 
       // retry launching the file
       continue;
+    }else{
+          n=2;
     }
+    n++;
 
-  } while (false);
+  } while (n<2);
 
-  process.waitForFinished(-1);
+  //process.waitForFinished(-1);
 
 }
