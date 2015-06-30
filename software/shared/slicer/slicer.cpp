@@ -70,7 +70,7 @@ QStringList Slicer::alignmentStrings() {
 
 Slicer::Slicer() {
   slice_height = 0.1;
-  alignment = kAlignBottom;
+  alignment = kAlignTray;
 }
 
 void Slicer::setAlignment(Alignment alignment) {
