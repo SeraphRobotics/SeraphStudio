@@ -77,16 +77,15 @@ MainWindow::MainWindow(QWidget *parent)
 
 
 
-/*
-  QDateTime curdt = QDateTime::currentDateTime();
-  QDateTime settime = QDateTime(QDate::fromString("12:12:2013", "d':'MM':'yyyy"),QTime(0,0));
 
+  QDateTime curdt = QDateTime::currentDateTime();
+  QDateTime settime = QDateTime(QDate::fromString("1:1:2016", "d':'M':'yyyy"),QTime(0,0));
 
   if (curdt>settime){
     QMessageBox::information(this->centralWidget(),"info","Your version has expired. please contact Seraph Robotics");
     QTimer::singleShot(0,this,SLOT(close()));
   }
-*/
+
 
 
   // Initialize the main window's settings
