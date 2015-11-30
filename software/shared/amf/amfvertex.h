@@ -63,7 +63,7 @@ public:
   * @param vertexElement the XML element containing the vertex data
   * @see WriteXml()
   */
-  void ReadFromXml(QDomElement& vertexElement);
+  void ReadFromXml(int id, QDomElement& vertexElement);
 
   /**
   * Outputs the AMF vertex data to an XML element

@@ -121,7 +121,7 @@ bool Vector3::isInvalid() const {
 
 Vector3& Vector3::normalize() {
   Float l = length();
-  confirm(l > 0) then { // normalizing a zero-vector is undefined
+  if(l > 0) { // normalizing a zero-vector is undefined
     x /= l;
     y /= l;
     z /= l;

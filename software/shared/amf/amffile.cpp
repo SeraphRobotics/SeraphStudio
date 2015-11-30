@@ -73,7 +73,7 @@ bool AMFFile::readFromFile(QString path) {
   }
 
   // Get all the object nodes
-  QDomNodeList objectNodes = root.elementsByTagName("Object");
+  QDomNodeList objectNodes = root.elementsByTagName("object");
 
   for (unsigned int i = 0; i < objectNodes.length(); i++) {
     AMFObject* newAmfObj = new AMFObject();

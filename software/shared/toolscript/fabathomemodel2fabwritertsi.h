@@ -59,7 +59,7 @@ public:
 
 public slots:
 
-  void setClearnace(double c_hieght,double c_speed);
+  void setClearnace(double c_hieght,double c_speed, double z_speed);
 
   void addMeshes(QString material_name,
                  QScriptValue material_calibration,
@@ -103,6 +103,7 @@ private:
   /// Clearances and speeds for XDFL
   double hieght;
   double speed;
+  double z_speed;
 
   /// Output document where elements are written
   QDomDocument& fab_document_;

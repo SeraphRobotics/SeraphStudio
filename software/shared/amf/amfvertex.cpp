@@ -29,6 +29,7 @@
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 \*---------------------------------------------------------------------------*/
 #include "amfvertex.h"
+#include <QDomNodeList>
 
 AMFVertex::AMFVertex() {
   vertexId = -1;
@@ -41,13 +42,25 @@ AMFVertex::AMFVertex(const FAHVector3& point, int vertexId) : point(point) {
 AMFVertex::~AMFVertex() {
 }
 
-void AMFVertex::ReadFromXml(QDomElement& vertexElement) {
-  vertexId = vertexElement.attribute("VertexID", "").toInt();
+void AMFVertex::ReadFromXml(int id, QDomElement& vertexElement) {
+  vertexId = id;
+  QDomElement coordinates = vertexElement.firstChildElement();
+  QDomNodeList nodes = coordinates.childNodes();
+  float x = 0;
+  float y = 0;
+  float z = 0;
 
-  QDomElement vertexLocationElement = vertexElement.firstChildElement();
-  float x = vertexLocationElement.attribute("X").toFloat();
-  float y = vertexLocationElement.attribute("Y").toFloat();
-  float z = vertexLocationElement.attribute("Z").toFloat();
+  for(int i=0;i<nodes.length();i++){
+      QDomNode node = nodes.at(i);
+      QDomElement el = node.toElement();
+      if(el.nodeName().toLower()=="x"){
+          x = el.text().toFloat();
+      }else if(el.nodeName().toLower()=="y"){
+          y = el.text().toFloat();
+      }else if(el.nodeName().toLower()=="z"){
+          z = el.text().toFloat();
+      }
+  }
 
   // Write into the vector3.
   point.set(x, y, z);

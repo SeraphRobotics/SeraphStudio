@@ -55,13 +55,13 @@ AMFRegion::~AMFRegion() {
 
 void AMFRegion::readFromXml(QDomElement& regionElement) {
   // Read the material id
-  QString matIdStr = regionElement.attribute("FillMaterialID");
+  QString matIdStr = regionElement.attribute("materialid");
   if (!matIdStr.isEmpty()) {
     fillMaterialId = matIdStr.toInt();
   }
 
   // Parse each triangle element
-  QDomNodeList triangleNodes = regionElement.elementsByTagName("Triangle");
+  QDomNodeList triangleNodes = regionElement.elementsByTagName("triangle");
   for (unsigned int i = 0; i < triangleNodes.length(); i++) {
     AMFTriangle* newTriangle = new AMFTriangle();
     triangles_.append(newTriangle);

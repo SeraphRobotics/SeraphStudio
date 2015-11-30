@@ -50,13 +50,14 @@ AMFObject::~AMFObject() {
 
 void AMFObject::ReadFromXml(QDomElement& objectElement) {
   // Set the units
-  if (objectElement.attribute("Units").toLower() == "mm")
+//  if (objectElement.attribute("units").toLower() == "mm")
+//    units = Milimeters;
+//  else if (objectElement.attribute("units").toLower() == "in")
+//    units = Inches;
     units = Milimeters;
-  else if (objectElement.attribute("Units").toLower() == "in")
-    units = Inches;
 
   // Get the mesh elements
-  QDomNodeList meshNodes = objectElement.elementsByTagName("Mesh");
+  QDomNodeList meshNodes = objectElement.elementsByTagName("mesh");
 
   meshes.clear();
   for (unsigned int i = 0; i < meshNodes.length(); i++) {
@@ -65,6 +66,7 @@ void AMFObject::ReadFromXml(QDomElement& objectElement) {
     QDomElement meshElement = meshNodes.at(i).toElement();
     newAmfMesh->ReadFromXml(meshElement);
   }
+  return;
 }
 
 void AMFObject::WriteXml(QDomElement& objectElement) {
@@ -87,14 +89,14 @@ void AMFObject::WriteXml(QDomElement& objectElement) {
 AMFMesh* AMFObject::GetMesh() {
   // Assert that there is exactly one mesh
 
-  confirm(meshes.size() == 1) then {
+  if(meshes.size() == 1){
     return meshes.at(0);
   }
 
   // If there are multiple meshes, return the first one
-  if (meshes.size() > 0)
+  if (meshes.size() > 0){
     return meshes.at(0);
-
+    }
   // If there are no meshes, return a null pointer
   return NULL;
 }
@@ -102,14 +104,14 @@ AMFMesh* AMFObject::GetMesh() {
 const AMFMesh* AMFObject::GetMesh() const {
   // Assert that there is exactly one mesh
 
-  confirm(meshes.size() == 1) then {
+  if (meshes.size() == 1){
     return meshes.at(0);
   }
 
   // If there are multiple meshes, return the first one
-  if (meshes.size() > 0)
+  if (meshes.size() > 0){
     return meshes.at(0);
-
+  }
   // If there are no meshes, return a null pointer
   return NULL;
 }

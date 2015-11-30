@@ -50,9 +50,22 @@ AMFTriangle::AMFTriangle(int v1, int v2, int v3) {
 
 void AMFTriangle::ReadFromXml(QDomElement& triangleElement) {
   // Grab the vertices out of the attributes of the element
-  v1 = triangleElement.attribute("V1").toInt();
-  v2 = triangleElement.attribute("V2").toInt();
-  v3 = triangleElement.attribute("V3").toInt();
+    QDomNodeList nodes = triangleElement.childNodes();
+    v1 = 0;
+    v2 = 0;
+    v3 = 0;
+
+    for(int i=0;i<nodes.length();i++){
+        QDomNode node = nodes.at(i);
+        QDomElement el = node.toElement();
+        if(el.nodeName().toLower()=="v1"){
+            v1 = el.text().toInt();
+        }else if(el.nodeName().toLower()=="v2"){
+            v2 = el.text().toInt();
+        }else if(el.nodeName().toLower()=="v3"){
+            v3 = el.text().toInt();
+        }
+    }
 }
 
 void AMFTriangle::WriteXml(QDomElement& triangleElement) {

@@ -63,6 +63,7 @@ FabAtHomeModel2FabWriterTSI::FabAtHomeModel2FabWriterTSI(QScriptEngine& engine,
     print_bottom_up_(true),        // usually building things
     hieght(10.0),
     speed(30.0),
+    z_speed(1.0),
     material_numbers(0)
 {
 }
@@ -73,9 +74,10 @@ FabAtHomeModel2FabWriterTSI::~FabAtHomeModel2FabWriterTSI() {
   }
 }
 
-void FabAtHomeModel2FabWriterTSI::setClearnace(double c_hieght,double c_speed){
+void FabAtHomeModel2FabWriterTSI::setClearnace(double c_hieght,double c_speed,double c_z_speed){
     hieght = c_hieght;
     speed = c_speed;
+    z_speed = c_z_speed;
 }
 
 void FabAtHomeModel2FabWriterTSI::addMeshes(QString material_name,
@@ -187,7 +189,7 @@ void FabAtHomeModel2FabWriterTSI::print() {
     MaterialProperties* material_properties = printable_region_pair.first;
     MaterialProperties::iterator i = material_properties->find("name");
     MaterialProperties::iterator j = material_properties->find("id");
-    confirm (i != material_properties->end()) else{ continue;}
+    confirm (i != material_properties->end())else{ continue;}
     QString tool_name = i.value();
     QString tool_id_string = j.value();
     int tool_id = tool_id_string.toInt();//nameIDmap[tool_name];
@@ -236,13 +238,23 @@ void FabAtHomeModel2FabWriterTSI::print() {
       FAHVector3 lastprime = lastpoint.copy();
       lastprime[2] = lastpoint[2]+hieght;
 
-      Path clearancepath = Path();
-      clearancepath.addPathPointEnd(lastpoint);
-      clearancepath.addPathPointEnd(lastprime);
-      clearancepath.addPathPointEnd(endprime);
-      clearancepath.addPathPointEnd(endpoint);
-      QDomElement clearnaceDomElement = makePathElement(&clearancepath,0,speed);
-      commandsDomElement.appendChild(clearnaceDomElement);
+      Path clearancepath_up = Path();
+      Path clearancepath_over = Path();
+      Path clearancepath_down = Path();
+      clearancepath_up.addPathPointEnd(lastpoint);
+      clearancepath_up.addPathPointEnd(lastprime);
+
+      clearancepath_over.addPathPointEnd(lastprime);
+      clearancepath_over.addPathPointEnd(endprime);
+
+      clearancepath_down.addPathPointEnd(endprime);
+      clearancepath_down.addPathPointEnd(endpoint);
+      QDomElement clearnaceUpDomElement = makePathElement(&clearancepath_up,0,z_speed);
+      QDomElement clearnaceOverDomElement = makePathElement(&clearancepath_over,0,speed);
+      QDomElement clearnaceDownDomElement = makePathElement(&clearancepath_down,0,z_speed);
+      commandsDomElement.appendChild(clearnaceUpDomElement);
+      commandsDomElement.appendChild(clearnaceOverDomElement);
+      commandsDomElement.appendChild(clearnaceDownDomElement);
 
 
 

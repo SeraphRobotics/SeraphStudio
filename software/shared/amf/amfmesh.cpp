@@ -63,19 +63,19 @@ AMFMesh::~AMFMesh() {
 
 void AMFMesh::ReadFromXml(QDomElement& meshElement) {
   // Read in the vertices
-  QDomElement verticesElement = meshElement.firstChildElement("Vertices");
-  QDomNodeList vertexNodeList = verticesElement.elementsByTagName("Vertex");
+  QDomElement verticesElement = meshElement.firstChildElement("vertices");
+  QDomNodeList vertexNodeList = verticesElement.elementsByTagName("vertex");
 
   int i;
   for (i = 0; i < vertexNodeList.size(); i++) {
     AMFVertex* newAmfVertex = new AMFVertex();
     vertices.append(newAmfVertex);
     QDomElement vertexElement = vertexNodeList.at(i).toElement();
-    newAmfVertex->ReadFromXml(vertexElement);
+    newAmfVertex->ReadFromXml(i,vertexElement);
   }
 
   // Now read the regions
-  QDomNodeList regionNodeList = meshElement.elementsByTagName("Region");
+  QDomNodeList regionNodeList = meshElement.elementsByTagName("volume");
   for (i = 0; i < regionNodeList.size(); i++) {
     AMFRegion* newAmfReg = new AMFRegion(this);
     regions.append(newAmfReg);
